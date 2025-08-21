@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\BusinessLogicLayer\CustomerService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using CoreModels.Models;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogicLayer
+{
+    public class CustomerService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        public CustomerService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+        public BasicDetailsEntity GetBasicDetails(long customerId)
+        {
+            return _unitOfWork.CustomerRepository.GetBasicDetails(customerId);
+        }
+        public CustomerAddressEntity GetCustomerAddress(long customerId)
+        {
+            return _unitOfWork.CustomerRepository.GetCustomerAddress(customerId);
+        }
+        public CustomerFamilyAndNomineeDetailsEntity GetCustomerFamilyAndNomineeDetails(long customerId)
+        {
+            return _unitOfWork.CustomerRepository.GetCustomerFamilyAndNomineeDetails(customerId);
+        }
+        public void EditBasicDetails(BasicDetailsEntity basicDetails)
+        {
+            _unitOfWork.CustomerRepository.EditBasicDetails(basicDetails);
+        }
+        public void EditCustomerAddress(CustomerAddressEntity customerAddress)
+        {
+            _unitOfWork.CustomerRepository.EditCustomerAddress(customerAddress);
+        }
+        public void EditCustomerFamilyAndNomineeDetails(CustomerFamilyAndNomineeDetailsEntity customerFamilyAndNomineeDetails)
+        {
+            _unitOfWork.CustomerRepository.EditCustomerFamilyAndNomineeDetails(customerFamilyAndNomineeDetails);
+        }
+        public List&lt;AccountDetails&gt; GetAllAccounts(long customerId)
+        {
+            return _unitOfWork.CustomerRepository.GetAllAccounts(customerId);
+        }
+        public string KYCStatus(long customerId)
+        {
+            return _unitOfWork.CustomerRepository.KYCStatus(customerId);
+        }
+        public void CompleteKYC(KYCModel customerKYCDetails)
+        {
+            _unitOfWork.CustomerRepository.CompleteKYC(customerKYCDetails);
+        }
+        public void DepositMoney(TransactionsEntity transactionDetails)
+        {
+            _unitOfWork.CustomerRepository.DepositMoney(transactionDetails);
+        }
+        public bool IsValidAccountNumber(long accountNumber)
+        {
+            return _unitOfWork.CustomerRepository.IsValidAccountNumber(accountNumber);
+        }
+        public bool HasSufficientBalance(long accountNumber, double amount)
+        {
+            return _unitOfWork.CustomerRepository.HasSufficientBalance(accountNumber, amount);
+        }
+        public bool IsExceedingMinBalanceWarningAmount(long accountNumber, double amount)
+        {
+            return _unitOfWork.CustomerRepository.IsExceedingMinBalanceWarningAmount(accountNumber, amount);
+        }
+        public bool IsExceedingMaxBalanceWarningAmount(long accountNumber, double amount)
+        {
+            return _unitOfWork.CustomerRepository.IsExceedingMaxBalanceWarningAmount(accountNumber,amount);
+        }
+        public void TransferMoney(TransactionsEntity transactionDetails)
+        {
+            _unitOfWork.CustomerRepository.TransferMoney(transactionDetails);
+        }
+        public void EditThresholdValue(long accountNumber, Double minBalanceWarningAmount, Double maxBalanceWarningAmount)
+        {
+            _unitOfWork.CustomerRepository.EditThresholdValue(accountNumber, minBalanceWarningAmount, maxBalanceWarningAmount);
+        }
+        public void FreezeWithdrawls(long accountNumber)
+        {
+            _unitOfWork.CustomerRepository.FreezeWithdrawls(accountNumber);
+        }
+        public void UnFreezeWithdrawls(long accountNumber)
+        {
+            _unitOfWork.CustomerRepository.UnFreezeWithdrawls(accountNumber);
+        }
+        public List&lt;TransactionsEntity&gt; GetAllTransactions(long accountNumber)
+        {
+            return _unitOfWork.CustomerRepository.GetAllTransactions(accountNumber);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,55,1],[17,9,17,10,1],[18,13,18,38,1],[19,9,19,10,1],[21,9,21,10,1],[22,13,22,79,1],[23,9,23,10,1],[25,9,25,10,1],[26,13,26,82,1],[27,9,27,10,1],[29,9,29,10,1],[30,13,30,98,1],[31,9,31,10,1],[33,9,33,10,1],[34,13,34,75,1],[35,9,35,10,1],[37,9,37,10,1],[38,13,38,81,1],[39,9,39,10,1],[41,9,41,10,1],[42,13,42,113,1],[43,9,43,10,1],[45,9,45,10,1],[46,13,46,78,1],[47,9,47,10,1],[49,9,49,10,1],[50,13,50,73,1],[51,9,51,10,1],[53,9,53,10,1],[54,13,54,76,1],[55,9,55,10,1],[57,9,57,10,1],[58,13,58,77,1],[59,9,59,10,1],[61,9,61,10,1],[62,13,62,87,1],[63,9,63,10,1],[65,9,65,10,1],[66,13,66,95,1],[67,9,67,10,1],[69,9,69,10,1],[70,13,70,109,1],[71,9,71,10,0],[73,9,73,10,1],[74,13,74,108,1],[75,9,75,10,0],[77,9,77,10,1],[78,13,78,78,1],[79,9,79,10,0],[81,9,81,10,1],[82,13,82,128,1],[83,9,83,10,0],[85,9,85,10,1],[86,13,86,76,1],[87,9,87,10,0],[89,9,89,10,1],[90,13,90,78,1],[91,9,91,10,0],[93,9,93,10,1],[94,13,94,85,1],[95,9,95,10,1]]);
+    </script>
+  </body>
+</html>

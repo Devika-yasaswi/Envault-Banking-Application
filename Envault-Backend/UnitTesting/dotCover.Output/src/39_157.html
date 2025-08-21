@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\CoreModels\Entities\BranchEntity.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CoreModels.Entities
+{
+    [Table(&quot;Envault_Tbl_BranchesAvailable&quot;)]
+    public class BranchEntity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BranchID { get; set; }
+        public string BranchLocatedState { get; set; }
+        public string City { get; set; }
+        public string BranchAddress { get; set; }
+        public string IFSCCode { get; set; }
+        public bool IsActive { get; set; } = true;
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public string? ModifiedBy { get; set; }
+        public DateTime ModifiedOn { get; set; } = DateTime.UtcNow;
+        [NotMapped]
+        public virtual ICollection&lt;AccountsEntity&gt; Accounts { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,31,16,35,0],[16,36,16,40,1],[17,44,17,48,0],[17,49,17,53,1],[18,30,18,34,0],[18,35,18,39,1],[19,39,19,43,0],[19,44,19,48,1],[20,34,20,38,0],[20,39,20,43,1],[21,32,21,36,0],[21,37,21,41,0],[21,46,21,50,1],[22,36,22,40,0],[22,41,22,45,0],[23,37,23,41,0],[23,42,23,46,0],[23,51,23,66,1],[24,37,24,41,0],[24,42,24,46,0],[25,38,25,42,0],[25,43,25,47,0],[25,52,25,67,1],[27,63,27,67,0],[27,68,27,72,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\DataAccessLayer\Infrastructure\UserValidationRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Infrastructure
+{
+    public class UserValidationRepository : IUserValidationRepository
+    {
+        private readonly ApplicationDBContext _dbContext;
+        private static readonly Random _random = new Random();
+        public UserValidationRepository(ApplicationDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        //Generates OTP to validate user
+        public int GenerateOtp()
+        {
+            try
+            {
+                var otp = _random.Next(100000, 999999);
+                return otp;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Validates OTP entered by the user
+        public bool ValidateOtp(int generatedOtp, int userEnteredOtp)
+        {
+            try
+            {
+                if (generatedOtp == userEnteredOtp)
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Generates CAPTCHA for validating user
+        public string GenerateCaptcha()
+        {
+            try
+            {
+                const string chars = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;;
+                Random random = new Random();
+                char[] code = new char[6];
+                for (int i = 0; i &lt; 6; i++)
+                {
+                    code[i] = chars[random.Next(chars.Length)];
+                }
+                return new string(code);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Validates CAPTCHA entered by the user
+        public bool ValidateCaptcha(string generatedCaptcha, string userEnteredCaptcha)
+        {
+            try
+            {
+                if (generatedCaptcha == userEnteredCaptcha)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,63,1],[15,9,15,72,1],[16,9,16,10,1],[17,13,17,36,1],[18,9,18,10,1],[21,9,21,10,1],[23,13,23,14,1],[24,17,24,56,1],[25,17,25,28,1],[27,13,27,33,0],[28,13,28,14,0],[29,17,29,49,0],[31,9,31,10,1],[34,9,34,10,1],[36,13,36,14,1],[37,17,37,52,1],[38,21,38,33,1],[40,21,40,34,1],[42,13,42,33,0],[43,13,43,14,0],[44,17,44,49,0],[46,9,46,10,1],[49,9,49,10,1],[51,13,51,14,1],[53,17,53,46,1],[54,17,54,43,1],[55,22,55,31,1],[55,33,55,38,1],[55,40,55,43,1],[56,17,56,18,1],[57,21,57,64,1],[58,17,58,18,1],[59,17,59,41,1],[61,13,61,33,0],[62,13,62,14,0],[63,17,63,49,0],[65,9,65,10,1],[68,9,68,10,1],[70,13,70,14,1],[71,17,71,60,1],[72,17,72,18,1],[73,21,73,33,1],[75,17,75,30,1],[77,13,77,33,0],[78,13,78,14,0],[79,17,79,49,0],[81,9,81,10,1]]);
+    </script>
+  </body>
+</html>

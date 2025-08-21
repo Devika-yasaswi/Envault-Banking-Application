@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\LoginAndRegistrationTest\LoginAndRegistrationControllerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using BusinessLogicLayer;
+using Castle.Core.Logging;
+using Castle.Core.Resource;
+using CoreModels;
+using CoreModels.Entities;
+using Envault_Backend.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnitTesting.Utils;
+
+namespace UnitTesting.LoginAndRegistrationTest
+{
+    public class LoginAndRegistrationControllerTest
+    {
+        private LoginAndRegistrationController _loginAndRegistrationController;
+        private Mock&lt;ILoginAndRegistrationRepository&gt; _loginAndRegistrationRepository;
+        private Mock&lt;IUnitOfWork&gt; _unitOfWork;
+        private Mock&lt;IConfiguration&gt; _mockConfig;
+        private Mock&lt;ILogger&lt;LoginAndRegistrationController&gt;&gt; _logger;
+
+       
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+        }
+        [SetUp]
+        public void ReintializeTest()
+        {
+            _unitOfWork = new Mock&lt;IUnitOfWork&gt;();
+            _mockConfig = new Mock&lt;Microsoft.Extensions.Configuration.IConfiguration&gt;();
+            _logger = new Mock&lt;ILogger&lt;LoginAndRegistrationController&gt;&gt;();
+
+            var configSection = new Mock&lt;IConfigurationSection&gt;();
+            configSection.Setup(a =&gt; a.GetSection(&quot;Key&quot;).Value).Returns(&quot;Devika@123#$%^&amp;*&amp;^%$#$%^&amp;*&amp;^%$#%^&amp;*(*&amp;$#@#%^&amp;*&amp;^$#%^&amp;*&amp;^$#$%^&amp;*&amp;^%$#$%&amp;*&amp;^$#$%&amp;*&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Issuer&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Audience&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            _mockConfig.Setup(a =&gt; a.GetSection(&quot;Jwt&quot;)).Returns(configSection.Object);
+
+            var messageSection = new Mock&lt;IConfigurationSection&gt;();
+            messageSection.Setup(a =&gt; a[&quot;customerNotExist&quot;]).Returns(&quot;Customer doesn&#39;t exist&quot;);
+            messageSection.Setup(a =&gt; a[&quot;duplicateRegistration&quot;]).Returns(&quot;Customer is already registered for netbanking&quot;);
+            messageSection.Setup(a =&gt; a[&quot;GenericMessages:Values:registrationSuccess&quot;]).Returns(&quot;Registration successful&quot;);
+            messageSection.Setup(a =&gt; a[&quot;GenericMessages:Values:passwordResetSuccess&quot;]).Returns(&quot;Password reset is successful&quot;);
+            _mockConfig.Setup(a =&gt; a.GetSection(&quot;GenericMessages:Values&quot;)).Returns(messageSection.Object);
+
+            _loginAndRegistrationController = new LoginAndRegistrationController(_unitOfWork.Object, _mockConfig.Object, _logger.Object);
+            _loginAndRegistrationRepository = new Mock&lt;ILoginAndRegistrationRepository&gt;();
+            _unitOfWork.Setup(a =&gt; a.LoginAndRegistrationRepository).Returns(_loginAndRegistrationRepository.Object);
+        }
+        [Test]
+        [TestCase(10000000)]
+        [TestCase(12345)]
+        public void CheckUserExistence(long customerId)
+        {
+            if (customerId == 10000000)
+            {
+                _loginAndRegistrationRepository.Setup(existence =&gt; existence.CheckUserExistence(customerId)).Returns(true);
+                var response = _loginAndRegistrationController.CheckUserExistence(customerId);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+                Assert.That(response.Result.Data, Is.True);
+            }
+            else if (customerId == 12345)
+            {
+                _loginAndRegistrationRepository.Setup(existence =&gt; existence.CheckUserExistence(customerId)).Returns(false);
+                var response = _loginAndRegistrationController.CheckUserExistence(customerId);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+        }
+        [Test]
+        public void CheckUserExistence_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(existence =&gt; existence.CheckUserExistence(1234)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var failResponse = _loginAndRegistrationController.CheckUserExistence(1234);
+            Assert.That(failResponse, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(failResponse.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(10000000)]
+        [TestCase(12345)]
+        public void IsRegisteredCustomer(long customerId) 
+        {
+            if (customerId == 10000000)
+            {
+                _loginAndRegistrationRepository.Setup(existence =&gt; existence.IsRegisteredCustomer(customerId)).Returns(true);
+                var response = _loginAndRegistrationController.IsRegisteredCustomer(customerId);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if (customerId == 12345)
+            {
+                _loginAndRegistrationRepository.Setup(existence =&gt; existence.IsRegisteredCustomer(customerId)).Returns(false);
+                var response = _loginAndRegistrationController.IsRegisteredCustomer(customerId);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+        }
+        [Test]
+        public void IsRegisteredCustomer_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(existence =&gt; existence.IsRegisteredCustomer(1234)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var failResponse = _loginAndRegistrationController.IsRegisteredCustomer(1234);
+            Assert.That(failResponse, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(failResponse.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(1000000000, &quot;abc@123&quot;, &quot;Hello&quot;)]
+        [TestCase(12345, &quot;xyz@123&quot;, &quot;World&quot;)]
+        public void RegisterNewUser(int customerId, string customerPassword, string securityMessage) 
+        {
+            var loginCredentials = new LoginCredentialsEntity
+            {
+                CustomerId = customerId,
+                CustomerPassword = customerPassword,
+                SecurityMessage = securityMessage
+            };
+            if(customerId == 1000000000)
+            {
+                _loginAndRegistrationRepository.Setup(newUser =&gt; newUser.RegisterNewUser(loginCredentials)).Returns(true);
+                var response = _loginAndRegistrationController.RegisterNewUser(loginCredentials);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if(customerId == 12345)
+            {
+                _loginAndRegistrationRepository.Setup(newUser =&gt; newUser.RegisterNewUser(loginCredentials)).Returns(false);
+                var response = _loginAndRegistrationController.RegisterNewUser(loginCredentials);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+        }
+        [Test]
+        [TestCase(1000000000, &quot;abc@123&quot;, &quot;Hello&quot;)]
+        public void RegisterNewUser_Exception(int customerId, string customerPassword, string securityMessage)
+        {
+            var loginCredentials = new LoginCredentialsEntity
+            {
+                CustomerId = customerId,
+                CustomerPassword = customerPassword,
+                SecurityMessage = securityMessage
+            };
+            _loginAndRegistrationRepository.Setup(newUser =&gt; newUser.RegisterNewUser(loginCredentials)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.RegisterNewUser(loginCredentials);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(1123456)]
+        public void GetUserSecurityMessage(long customerId) 
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.GetUserSecurityMessage(customerId)).Returns(&quot;Hello&quot;);
+            var response = _loginAndRegistrationController.GetUserSecurityMessage(customerId);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GetUserSecurityMessage_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.GetUserSecurityMessage(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.GetUserSecurityMessage(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(1000000, &quot;asdf&quot;)]
+        [TestCase(12345, &quot;hello&quot;)]
+        public void ValidateUserToLogin(long customerId, string password) 
+        {
+            if (customerId == 1000000)
+            {
+                _loginAndRegistrationRepository.Setup(customer =&gt; customer.ValidateUserToLogin(customerId, password)).Returns(true);
+                var response = _loginAndRegistrationController.ValidateUserToLogin(customerId, password);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if (customerId == 12345)
+            {
+                _loginAndRegistrationRepository.Setup(customer =&gt; customer.ValidateUserToLogin(customerId, password)).Returns(false);
+                var response = _loginAndRegistrationController.ValidateUserToLogin(customerId, password);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+        }
+        [Test]
+        [TestCase(1000000, &quot;asdf&quot;)]
+        public void ValidateUserToLogin_Exception(long customerId, string password)
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.ValidateUserToLogin(customerId, password)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.ValidateUserToLogin(customerId, password);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(987654321989)]
+        [TestCase(123456789034)]
+        public void CheckUserExistenceWithAadhar(long aadharNumber) 
+        {
+            if(aadharNumber == 987654321989)
+            {
+                _loginAndRegistrationRepository.Setup(customer =&gt; customer.CheckUserExistenceWithAadhar(aadharNumber)).Returns(true);
+                var response = _loginAndRegistrationController.CheckUserExistenceWithAadhar(aadharNumber);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if (aadharNumber == 123456789034)
+            {
+                _loginAndRegistrationRepository.Setup(customer =&gt; customer.CheckUserExistenceWithAadhar(aadharNumber)).Returns(false);
+                var response = _loginAndRegistrationController.CheckUserExistenceWithAadhar(aadharNumber);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+        }
+        [Test]
+        public void CheckUserExistenceWithAadhar_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.CheckUserExistenceWithAadhar(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.CheckUserExistenceWithAadhar(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(1234567)]
+        public void GetCustomerId(long aadharNumber) 
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.GetCustomerId(aadharNumber)).Returns(12345);
+            var response = _loginAndRegistrationController.GetCustomerId(aadharNumber);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GetCustomerId_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.GetCustomerId(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.GetCustomerId(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(123456,&quot;hello&quot;)]
+        public void ResetPassword(long customerId, string password) 
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.ResetPassword(customerId, password));
+            var response = _loginAndRegistrationController.ResetPassword(customerId, password);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void ResetPassword_Exception()
+        {
+            _loginAndRegistrationRepository.Setup(customer =&gt; customer.ResetPassword(0, &quot;&quot;)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _loginAndRegistrationController.ResetPassword(0, &quot;&quot;);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[33,9,33,10,1],[34,9,34,10,1],[37,9,37,10,1],[38,13,38,51,1],[39,13,39,89,1],[40,13,40,75,1],[42,13,42,67,1],[43,13,43,157,1],[44,13,44,92,1],[45,13,45,94,1],[46,13,46,87,1],[48,13,48,68,1],[49,13,49,96,1],[50,13,50,124,1],[51,13,51,123,1],[52,13,52,129,1],[53,13,53,107,1],[55,13,55,138,1],[56,13,56,91,1],[57,13,57,118,1],[58,9,58,10,1],[63,9,63,10,1],[64,13,64,40,1],[65,13,65,14,1],[66,17,66,124,1],[67,17,67,95,1],[68,17,68,79,1],[69,17,69,62,1],[70,17,70,60,1],[71,13,71,14,1],[72,18,72,42,1],[73,13,73,14,1],[74,17,74,125,1],[75,17,75,95,1],[76,17,76,79,1],[77,17,77,62,1],[78,13,78,14,1],[79,9,79,10,1],[82,9,82,10,1],[83,13,83,146,1],[84,13,84,89,1],[85,13,85,79,1],[86,13,86,63,1],[87,9,87,10,1],[92,9,92,10,1],[93,13,93,40,1],[94,13,94,14,1],[95,17,95,126,1],[96,17,96,97,1],[97,17,97,79,1],[98,17,98,62,1],[99,13,99,14,1],[100,18,100,42,1],[101,13,101,14,1],[102,17,102,127,1],[103,17,103,97,1],[104,17,104,79,1],[105,17,105,62,1],[106,13,106,14,1],[107,9,107,10,1],[110,9,110,10,1],[111,13,111,148,1],[112,13,112,91,1],[113,13,113,79,1],[114,13,114,63,1],[115,9,115,10,1],[120,9,120,10,1],[121,13,126,15,1],[127,13,127,41,1],[128,13,128,14,1],[129,17,129,123,1],[130,17,130,98,1],[131,17,131,79,1],[132,17,132,62,1],[133,13,133,14,1],[134,18,134,41,1],[135,13,135,14,1],[136,17,136,124,1],[137,17,137,98,1],[138,17,138,79,1],[139,17,139,62,1],[140,13,140,14,1],[141,9,141,10,1],[145,9,145,10,1],[146,13,151,15,1],[152,13,152,151,1],[153,13,153,94,1],[154,13,154,75,1],[155,13,155,59,1],[156,9,156,10,1],[160,9,160,10,1],[161,13,161,125,1],[162,13,162,95,1],[163,13,163,75,1],[164,13,164,58,1],[165,9,165,10,1],[168,9,168,10,1],[169,13,169,145,1],[170,13,170,86,1],[171,13,171,75,1],[172,13,172,59,1],[173,9,173,10,1],[178,9,178,10,1],[179,13,179,39,1],[180,13,180,14,1],[181,17,181,133,1],[182,17,182,106,1],[183,17,183,79,1],[184,17,184,62,1],[185,13,185,14,1],[186,18,186,42,1],[187,13,187,14,1],[188,17,188,134,1],[189,17,189,106,1],[190,17,190,79,1],[191,17,191,62,1],[192,13,192,14,1],[193,9,193,10,1],[197,9,197,10,1],[198,13,198,161,1],[199,13,199,102,1],[200,13,200,75,1],[201,13,201,59,1],[202,9,202,10,1],[207,9,207,10,1],[208,13,208,45,1],[209,13,209,14,1],[210,17,210,134,1],[211,17,211,107,1],[212,17,212,79,1],[213,17,213,62,1],[214,13,214,14,1],[215,18,215,51,1],[216,13,216,14,1],[217,17,217,135,1],[218,17,218,107,1],[219,17,219,79,1],[220,17,220,62,1],[221,13,221,14,1],[222,9,222,10,1],[225,9,225,10,1],[226,13,226,151,1],[227,13,227,92,1],[228,13,228,75,1],[229,13,229,59,1],[230,9,230,10,1],[234,9,234,10,1],[235,13,235,116,1],[236,13,236,88,1],[237,13,237,75,1],[238,13,238,58,1],[239,9,239,10,1],[242,9,242,10,1],[243,13,243,136,1],[244,13,244,77,1],[245,13,245,75,1],[246,13,246,59,1],[247,9,247,10,1],[251,9,251,10,1],[252,13,252,109,1],[253,13,253,96,1],[254,13,254,75,1],[255,13,255,58,1],[256,9,256,10,1],[259,9,259,10,1],[260,13,260,140,1],[261,13,261,81,1],[262,13,262,75,1],[263,13,263,59,1],[264,9,264,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\CustomerTest\CustomerControllerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using Castle.Core.Resource;
+using CoreModels;
+using CoreModels.Entities;
+using CoreModels.Models;
+using DataAccessLayer.Infrastructure;
+using Envault_Backend.Controllers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnitTesting.CustomerTest
+{
+    public class CustomerControllerTest
+    {
+        private CustomerController _customerController;
+        private Mock&lt;ICustomerRepository&gt; _customerRepository;
+        private Mock&lt;IUnitOfWork&gt; _unitOfWork;
+        private Mock&lt;IConfiguration&gt; _mockConfig;
+        private Mock&lt;ILogger&lt;CustomerController&gt;&gt; _logger;
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+
+        }
+        [SetUp]
+        public void ReintializeTest()
+        {
+            _unitOfWork = new Mock&lt;IUnitOfWork&gt;();
+            _mockConfig = new Mock&lt;Microsoft.Extensions.Configuration.IConfiguration&gt;();
+            _logger = new Mock&lt;ILogger&lt;CustomerController&gt;&gt;();
+
+            var configSection = new Mock&lt;IConfigurationSection&gt;();
+            configSection.Setup(a =&gt; a.GetSection(&quot;key&quot;).Value).Returns(&quot;Devika@123#$%^&amp;*&amp;^%$#$%^&amp;*&amp;^%$#%^&amp;*(*&amp;$#@#%^&amp;*&amp;^$#%^&amp;*&amp;^$#$%^&amp;*&amp;^%$#$%&amp;*&amp;^$#$%&amp;*&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Issuer&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Audience&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            _mockConfig.Setup(a =&gt; a.GetSection(&quot;Jwt&quot;)).Returns(configSection.Object);
+
+            _customerController = new CustomerController(_unitOfWork.Object, configSection.Object, _logger.Object);
+            _customerRepository = new Mock&lt;ICustomerRepository&gt;();
+            _unitOfWork.Setup(a =&gt; a.CustomerRepository).Returns(_customerRepository.Object);
+        }
+        [Test]
+        [TestCase(10000001)]
+        public void GetBasicDetails(long customerId)
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetBasicDetails(customerId)).Returns(new BasicDetailsEntity());
+            var response = _customerController.GetBasicDetails(customerId);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GetBasicDetails_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetBasicDetails(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.GetBasicDetails(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(10000001)]
+        public void GetCustomerAddress(long customerId)
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetCustomerAddress(customerId)).Returns(new CustomerAddressEntity());
+            var response = _customerController.GetCustomerAddress(customerId);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GetCustomerAddress_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetCustomerAddress(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.GetCustomerAddress(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(10000001)]
+        public void GetCustomerFamilyAndNomineeDetails(long customerId)
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetCustomerFamilyAndNomineeDetails(customerId)).Returns(new CustomerFamilyAndNomineeDetailsEntity());
+            var response = _customerController.GetCustomerFamilyAndNomineeDetails(customerId);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GetCustomerFamilyAndNomineeDetails_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetCustomerFamilyAndNomineeDetails(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.GetCustomerFamilyAndNomineeDetails(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        public void EditBasicDetails()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditBasicDetails(new BasicDetailsEntity()));
+            var response = _customerController.EditBasicDetails(new BasicDetailsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void EditBasicDetails_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditBasicDetails(It.IsAny&lt; BasicDetailsEntity&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.EditBasicDetails(new BasicDetailsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void EditCustomerAddress()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditCustomerAddress(new CustomerAddressEntity()));
+            var response = _customerController.EditCustomerAddress(new CustomerAddressEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void EditCustomerAddress_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditCustomerAddress(It.IsAny&lt;CustomerAddressEntity&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.EditCustomerAddress(new CustomerAddressEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void EditCustomerFamilyAndNomineeDetails()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditCustomerFamilyAndNomineeDetails(new CustomerFamilyAndNomineeDetailsEntity()));
+            var response = _customerController.EditCustomerFamilyAndNomineeDetails(new CustomerFamilyAndNomineeDetailsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void EditCustomerFamilyAndNomineeDetails_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditCustomerFamilyAndNomineeDetails(It.IsAny&lt;CustomerFamilyAndNomineeDetailsEntity&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.EditCustomerFamilyAndNomineeDetails(new CustomerFamilyAndNomineeDetailsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void GetAllAccounts()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetAllAccounts(10000001)).Returns(new List&lt;AccountDetails&gt;());
+            var response = _customerController.GetAllAccounts(10000001);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void GetAllAccounts_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetAllAccounts(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.GetAllAccounts(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void KYCStatus()
+        {
+            _customerRepository.Setup(customer =&gt; customer.KYCStatus(10000001)).Returns(&quot;Approved&quot;);
+            var response = _customerController.KYCStatus(10000001);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void KYCStatus_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.KYCStatus(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.KYCStatus(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void CompleteKYC()
+        {
+            _customerRepository.Setup(customer =&gt; customer.CompleteKYC(new KYCModel()));
+            var response = _customerController.CompleteKYC(new KYCModel());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void CompleteKYC_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.CompleteKYC(It.IsAny&lt;KYCModel&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.CompleteKYC(new KYCModel());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void DepositMoney()
+        {
+            _customerRepository.Setup(customer =&gt; customer.DepositMoney(new TransactionsEntity()));
+            var response = _customerController.DepositMoney(new TransactionsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void DepositMoney_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.DepositMoney(It.IsAny&lt;TransactionsEntity&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.DepositMoney(new TransactionsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        [TestCase(100000000001)]
+        [TestCase(100000000000)]
+        public void IsValidAccountNumber(long accountNumber)
+        {
+            if (accountNumber == 100000000001)
+            {
+                _customerRepository.Setup(customer =&gt; customer.IsValidAccountNumber(accountNumber)).Returns(true);
+                var response = _customerController.IsValidAccountNumber(accountNumber);
+                Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+                Assert.That(response.Status, Is.True);
+            }
+            else if (accountNumber == 100000000000)
+            {
+                _customerRepository.Setup(customer =&gt; customer.IsValidAccountNumber(accountNumber)).Returns(false);
+                var response = _customerController.IsValidAccountNumber(accountNumber);
+                Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+                Assert.That(response.Status, Is.True);
+            }
+        }
+        [Test]
+        public void IsValidAccountNumber_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.IsValidAccountNumber(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.IsValidAccountNumber(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        [TestCase(100000000002, 100)]
+        [TestCase(100000000001, 10)]
+        public void HasSufficientBalance(long accountNumber, double amount)
+        {
+            if (accountNumber == 100000000002)
+            {
+                _customerRepository.Setup(customer =&gt; customer.HasSufficientBalance(accountNumber, amount)).Returns(true);
+                var response = _customerController.HasSufficientBalance(accountNumber, amount);
+                Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+                Assert.That(response.Status, Is.True);
+            }
+            else if(accountNumber == 100000000001)
+            {
+                _customerRepository.Setup(customer =&gt; customer.HasSufficientBalance(accountNumber, amount)).Returns(false);
+                var response = _customerController.HasSufficientBalance(accountNumber, amount);
+                Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+                Assert.That(response.Status, Is.True);
+            }
+        }
+        [Test]
+        public void HasSufficientBalance_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.HasSufficientBalance(0,0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.HasSufficientBalance(0,0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void IsExceedingMinBalanceWarningAmount()
+        {
+
+        }
+        [Test]
+        public void IsExceedingMinBalanceWarningAmount_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.IsExceedingMinBalanceWarningAmount(0, 0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.IsExceedingMinBalanceWarningAmount(0, 0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void IsExceedingMaxBalanceWarningAmount()
+        {
+
+        }
+        [Test]
+        public void IsExceedingMaxBalanceWarningAmount_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.IsExceedingMaxBalanceWarningAmount(0, 0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.IsExceedingMaxBalanceWarningAmount(0, 0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void TransferMoney()
+        {
+
+        }
+        [Test]
+        public void TransferMoney_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.TransferMoney(It.IsAny&lt;TransactionsEntity&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.TransferMoney(new TransactionsEntity());
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void EditThresholdValue()
+        {
+
+        }
+        [Test]
+        public void EditThresholdValue_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.EditThresholdValue(0, 0, 0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.EditThresholdValue(0, 0, 0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void FreezeWithdrawls()
+        {
+
+        }
+        [Test]
+        public void FreezeWithdrawls_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.FreezeWithdrawls(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.FreezeWithdrawls(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void UnFreezeWithdrawls()
+        {
+
+        }
+        [Test]
+        public void UnFreezeWithdrawls_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.UnFreezeWithdrawls(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.UnFreezeWithdrawls(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void GetAllTransactions()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetAllTransactions(10000001)).Returns(new List&lt;TransactionsEntity&gt;());
+            var response = _customerController.GetAllTransactions(10000001);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.True);
+        }
+        [Test]
+        public void GetAllTransactions_Exception()
+        {
+            _customerRepository.Setup(customer =&gt; customer.GetAllTransactions(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _customerController.GetAllTransactions(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[28,9,28,10,1],[30,9,30,10,1],[33,9,33,10,1],[34,13,34,51,1],[35,13,35,89,1],[36,13,36,63,1],[38,13,38,67,1],[39,13,39,157,1],[40,13,40,92,1],[41,13,41,94,1],[42,13,42,87,1],[44,13,44,116,1],[45,13,45,67,1],[46,13,46,94,1],[47,9,47,10,1],[51,9,51,10,1],[52,13,52,123,1],[53,13,53,76,1],[54,13,54,75,1],[55,13,55,58,1],[56,9,56,10,1],[59,9,59,10,1],[60,13,60,126,1],[61,13,61,67,1],[62,13,62,75,1],[63,13,63,59,1],[64,9,64,10,1],[68,9,68,10,1],[69,13,69,129,1],[70,13,70,79,1],[71,13,71,75,1],[72,13,72,58,1],[73,9,73,10,1],[76,9,76,10,1],[77,13,77,129,1],[78,13,78,70,1],[79,13,79,75,1],[80,13,80,59,1],[81,9,81,10,1],[85,9,85,10,1],[86,13,86,161,1],[87,13,87,95,1],[88,13,88,75,1],[89,13,89,58,1],[90,9,90,10,1],[93,9,93,10,1],[94,13,94,145,1],[95,13,95,86,1],[96,13,96,75,1],[97,13,97,59,1],[98,9,98,10,1],[101,9,101,10,1],[102,13,102,104,1],[103,13,103,91,1],[104,13,104,69,1],[105,13,105,51,1],[106,9,106,10,1],[109,9,109,10,1],[110,13,110,157,1],[111,13,111,91,1],[112,13,112,69,1],[113,13,113,52,1],[114,9,114,10,1],[117,9,117,10,1],[118,13,118,110,1],[119,13,119,97,1],[120,13,120,69,1],[121,13,121,51,1],[122,9,122,10,1],[125,9,125,10,1],[126,13,126,162,1],[127,13,127,97,1],[128,13,128,69,1],[129,13,129,52,1],[130,9,130,10,1],[133,9,133,10,1],[134,13,134,142,1],[135,13,135,129,1],[136,13,136,69,1],[137,13,137,51,1],[138,9,138,10,1],[141,9,141,10,1],[142,13,142,194,1],[143,13,143,129,1],[144,13,144,69,1],[145,13,145,52,1],[146,9,146,10,1],[149,9,149,10,1],[150,13,150,122,1],[151,13,151,73,1],[152,13,152,69,1],[153,13,153,51,1],[154,9,154,10,1],[157,9,157,10,1],[158,13,158,125,1],[159,13,159,66,1],[160,13,160,69,1],[161,13,161,52,1],[162,9,162,10,1],[165,9,165,10,1],[166,13,166,101,1],[167,13,167,68,1],[168,13,168,69,1],[169,13,169,51,1],[170,9,170,10,1],[173,9,173,10,1],[174,13,174,120,1],[175,13,175,61,1],[176,13,176,69,1],[177,13,177,52,1],[178,9,178,10,1],[181,9,181,10,1],[182,13,182,89,1],[183,13,183,76,1],[184,13,184,69,1],[185,13,185,51,1],[186,9,186,10,1],[189,9,189,10,1],[190,13,190,141,1],[191,13,191,76,1],[192,13,192,69,1],[193,13,193,52,1],[194,9,194,10,1],[197,9,197,10,1],[198,13,198,100,1],[199,13,199,87,1],[200,13,200,69,1],[201,13,201,51,1],[202,9,202,10,1],[205,9,205,10,1],[206,13,206,152,1],[207,13,207,87,1],[208,13,208,69,1],[209,13,209,52,1],[210,9,210,10,1],[215,9,215,10,1],[216,13,216,47,1],[217,13,217,14,1],[218,17,218,115,1],[219,17,219,88,1],[220,17,220,73,1],[221,17,221,55,1],[222,13,222,14,1],[223,18,223,52,1],[224,13,224,14,1],[225,17,225,116,1],[226,17,226,88,1],[227,17,227,73,1],[228,17,228,55,1],[229,13,229,14,1],[230,9,230,10,1],[233,9,233,10,1],[234,13,234,131,1],[235,13,235,72,1],[236,13,236,69,1],[237,13,237,52,1],[238,9,238,10,1],[243,9,243,10,1],[244,13,244,47,1],[245,13,245,14,1],[246,17,246,123,1],[247,17,247,96,1],[248,17,248,73,1],[249,17,249,55,1],[250,13,250,14,1],[251,18,251,51,1],[252,13,252,14,1],[253,17,253,124,1],[254,17,254,96,1],[255,17,255,73,1],[256,17,256,55,1],[257,13,257,14,1],[258,9,258,10,1],[261,9,261,10,1],[262,13,262,133,1],[263,13,263,74,1],[264,13,264,69,1],[265,13,265,52,1],[266,9,266,10,1],[269,9,269,10,1],[271,9,271,10,1],[274,9,274,10,1],[275,13,275,148,1],[276,13,276,89,1],[277,13,277,69,1],[278,13,278,52,1],[279,9,279,10,1],[282,9,282,10,1],[284,9,284,10,1],[287,9,287,10,1],[288,13,288,148,1],[289,13,289,89,1],[290,13,290,69,1],[291,13,291,52,1],[292,9,292,10,1],[295,9,295,10,1],[297,9,297,10,1],[300,9,300,10,1],[301,13,301,153,1],[302,13,302,88,1],[303,13,303,69,1],[304,13,304,52,1],[305,9,305,10,1],[308,9,308,10,1],[310,9,310,10,1],[313,9,313,10,1],[314,13,314,135,1],[315,13,315,76,1],[316,13,316,69,1],[317,13,317,52,1],[318,9,318,10,1],[321,9,321,10,1],[323,9,323,10,1],[326,9,326,10,1],[327,13,327,127,1],[328,13,328,68,1],[329,13,329,69,1],[330,13,330,52,1],[331,9,331,10,1],[334,9,334,10,1],[336,9,336,10,1],[339,9,339,10,1],[340,13,340,129,1],[341,13,341,70,1],[342,13,342,69,1],[343,13,343,52,1],[344,9,344,10,1],[347,9,347,10,1],[348,13,348,130,1],[349,13,349,77,1],[350,13,350,69,1],[351,13,351,51,1],[352,9,352,10,1],[355,9,355,10,1],[356,13,356,129,1],[357,13,357,70,1],[358,13,358,69,1],[359,13,359,52,1],[360,9,360,10,1]]);
+    </script>
+  </body>
+</html>

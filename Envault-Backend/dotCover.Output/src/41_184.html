@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\CoreModels\Entities\BasicDetailsEntity.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CoreModels.Entities
+{
+    [Table(&quot;Envault_Tbl_BasicDetails&quot;)]
+    public class BasicDetailsEntity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public DateOnly DateOfBirth { get; set; }
+        public string Gender { get; set; }
+        public long AadharNumber { get; set; }
+        public long MobileNumber { get; set; }
+        public string PANNumber { get; set; }
+        public string CustomerEmail { get; set; }
+        public string EmployementType { get; set; }
+        public long AnnualIncome { get; set; }
+        public bool Nationality { get; set; }
+        public bool TaxResidentOfIndia { get; set; }
+        public bool IsActive { get; set; } = true;
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public string? ModifiedBy { get; set; }
+        public DateTime ModifiedOn { get; set; } = DateTime.UtcNow;
+        public virtual CustomerAddressEntity? CustomerAddress { get; set; }
+        public virtual CustomerFamilyAndNomineeDetailsEntity? CustomerFamilyAndNomineeDetails { get; set; }
+        public virtual LoginCredentialsEntity? LoginCredentials { get; set; }
+        public virtual KYCEntity? KYC { get; set; }
+        public virtual ICollection&lt;AccountsEntity&gt;? Accounts { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,34,16,38,1],[16,39,16,43,1],[17,38,17,42,0],[17,43,17,47,1],[18,39,18,43,1],[18,44,18,48,1],[19,32,19,36,0],[19,37,19,41,1],[20,36,20,40,1],[20,41,20,45,1],[21,36,21,40,1],[21,41,21,45,1],[22,35,22,39,1],[22,40,22,44,1],[23,39,23,43,1],[23,44,23,48,1],[24,41,24,45,1],[24,46,24,50,1],[25,36,25,40,1],[25,41,25,45,1],[26,35,26,39,0],[26,40,26,44,1],[27,42,27,46,0],[27,47,27,51,1],[28,32,28,36,0],[28,37,28,41,0],[28,46,28,50,1],[29,36,29,40,0],[29,41,29,45,1],[30,37,30,41,0],[30,42,30,46,0],[30,51,30,66,1],[31,37,31,41,0],[31,42,31,46,1],[32,38,32,42,0],[32,43,32,47,1],[32,52,32,67,1],[33,65,33,69,1],[33,70,33,74,0],[34,97,34,101,0],[34,102,34,106,0],[35,67,35,71,0],[35,72,35,76,0],[36,41,36,45,0],[36,46,36,50,0],[37,64,37,68,0],[37,69,37,73,0]]);
+    </script>
+  </body>
+</html>

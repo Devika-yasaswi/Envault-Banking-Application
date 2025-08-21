@@ -1,0 +1,5 @@
+2025-03-03T18:50:41.7949590+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-03-03T18:51:02.0415340+05:30 [Thread:] [ERR] (Envault_Backend.Controllers.LoginAndRegistrationController) Sequence contains no elements
+2025-03-03T18:51:51.5345069+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-03-03T18:53:40.6908650+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA mismatched. Please try again
+2025-03-03T18:53:52.2779752+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched

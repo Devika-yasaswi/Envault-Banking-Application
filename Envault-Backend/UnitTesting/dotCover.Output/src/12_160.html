@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\UserValidationTest\UserValidationRepositoryTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnitTesting.Utils;
+using static System.Net.WebRequestMethods;
+
+namespace UnitTesting.UserValidationTest
+{
+    public class UserValidationRepositoryTest : DbContextMock
+    {
+        [Test]
+        public void GenerateOtp()
+        {
+            var response = _userValidationRepository.GenerateOtp();
+            Assert.That(response, Is.InRange(100000, 999999));
+        }
+        [Test]
+        public void GenerateOtp_Exception()
+        {
+        }
+        [Test]
+        [TestCase(123456)]
+        [TestCase(000000)]
+        public void ValidateOtp(int userEnteredOtp)
+        {
+            var response = _userValidationRepository.ValidateOtp(123456, userEnteredOtp);
+            if(userEnteredOtp == 123456)
+                Assert.That(response, Is.True);
+            else if (userEnteredOtp == 000000)
+                Assert.That(response, Is.False);
+        }
+        [Test]
+        public void ValidateOtp_Exception()
+        {
+
+        }
+        [Test]
+        public void GenerateCaptcha()
+        {
+            var response = _userValidationRepository.GenerateCaptcha();
+            Assert.That(response.Length, Is.EqualTo(6));
+        }
+        [Test]
+        public void GenerateCaptcha_Exception()
+        {
+
+        }
+        [Test]
+        [TestCase(&quot;hello1&quot;)]
+        [TestCase(&quot;Hello1&quot;)]
+        public void ValidateCaptcha(string userEnteredCaptcha)
+        {
+            var response = _userValidationRepository.ValidateCaptcha(&quot;hello1&quot;, userEnteredCaptcha);
+            if (userEnteredCaptcha == &quot;hello1&quot;)
+                Assert.That(response, Is.True);
+            else if (userEnteredCaptcha == &quot;Hello1&quot;)
+                Assert.That(response, Is.False);
+        }
+        [Test]
+        public void ValidateCaptcha_Exception()
+        {
+            //var response = _userValidationRepository.ValidateCaptcha(null, &quot;abcdef&quot;);
+            //Assert.That(response, )
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[16,13,16,68,1],[17,13,17,63,1],[18,9,18,10,1],[21,9,21,10,1],[22,9,22,10,1],[27,9,27,10,1],[28,13,28,90,1],[29,13,29,41,1],[30,17,30,48,1],[31,18,31,47,1],[32,17,32,49,1],[33,9,33,10,1],[36,9,36,10,1],[38,9,38,10,1],[41,9,41,10,1],[42,13,42,72,1],[43,13,43,57,1],[44,9,44,10,1],[47,9,47,10,1],[49,9,49,10,1],[54,9,54,10,1],[55,13,55,100,1],[56,13,56,48,1],[57,17,57,48,1],[58,18,58,53,1],[59,17,59,49,1],[60,9,60,10,1],[63,9,63,10,1],[66,9,66,10,1]]);
+    </script>
+  </body>
+</html>

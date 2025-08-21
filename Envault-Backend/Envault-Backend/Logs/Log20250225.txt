@@ -1,0 +1,3 @@
+2025-02-25T18:12:09.7263934+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA mismatched. Please try again
+2025-02-25T18:12:19.9733910+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-25T18:12:40.6476793+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched

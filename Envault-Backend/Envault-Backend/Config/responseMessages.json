@@ -1,0 +1,31 @@
+﻿{
+  "GenericMessages": {
+    "Values": {
+      "OTPMismatched": "The OTP you entered is incorrect. Please try again",
+      "CAPTCHAMismatched": "CAPTCHA mismatched. Please try again",
+      "duplicateEmailError": "A user already exists with given email",
+      "duplicatePANError": "A user already exists with given PAN Number",
+      "preExistingCustomer": "Customer already exists! So creating the account directly",
+      "AccountCreationSuccessful": "Your Account is created successfully",
+      "customerNotExist": "Customer doesn't exist",
+      "duplicateRegistration": "Customer is already registered for netbanking",
+      "passwordResetSuccess": "Password reset is successful",
+      "registrationSuccess": "Registration successful",
+      "dataUpdationSuccess": "Updated successfully",
+      "kycUploaded": "Your KYC documents have been successfully uploaded",
+      "kycApproved": "KYC of the customer is approved",
+      "kycRejected": "KYC of the customer is Rejected",
+      "depositSuccessful": "Money deposited into your account successfully",
+      "noAccountExists": "No customer exists with the given receiver account number",
+      "insufficientBalance": "Insufficient amount in your account to process the transaction",
+      "exceedingMinBalance": "Your balance has fallen below the minimum threshold",
+      "exceedingMaxBalance": "Your balance is exceeding maximum threshold",
+      "moneyTransferSuccessful": "Money transferred successfully",
+      "thresholdLimitSet": "Threshold balance alert set successfully",
+      "transactionFreezed": "Freezed transactions successfully",
+      "transactionUnFreezed": "Unfreezed transactions successfully",
+      "noTransactions": "No transactions are performed",
+      "LoadingBranchFail": "Unable to fetch all branches right now"
+    }
+  }
+}

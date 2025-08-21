@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\DataAccessLayer\Infrastructure\LoginAndRegistrationRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Infrastructure
+{
+    public class LoginAndRegistrationRepository : ILoginAndRegistrationRepository
+    {
+        private readonly ApplicationDBContext _dbContext;
+        public LoginAndRegistrationRepository(ApplicationDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        //Checks whether the user exists or not - Used for registering customer for netbanking &amp; resetting password
+        public bool CheckUserExistence(long customerId)
+        {
+            try
+            {
+                BasicDetailsEntity? customerDetails = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(account =&gt; account.CustomerId == customerId).FirstOrDefault();
+                if (customerDetails != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether the customer already registered for netbanking or not
+        public bool IsRegisteredCustomer(long customerId)
+        {
+            try
+            {
+                LoginCredentialsEntity? loginCredentials = _dbContext.Set&lt;LoginCredentialsEntity&gt;().Where(loginData =&gt; loginData.CustomerId == customerId).FirstOrDefault();
+                if (loginCredentials != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Registers the customer for net banking 
+        public bool RegisterNewUser(LoginCredentialsEntity loginCredentials)
+        {
+            try
+            {
+                loginCredentials.CreatedBy = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == loginCredentials.CustomerId).Select(customer =&gt; customer.CustomerEmail).FirstOrDefault();
+                loginCredentials.ModifiedBy = loginCredentials.CreatedBy;
+                _dbContext.Set&lt;LoginCredentialsEntity&gt;().Add(loginCredentials);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Gives security message of the customer for application authentication
+        public string GetUserSecurityMessage(long customerId)
+        {
+            try
+            {
+                LoginCredentialsEntity? loginCredentials = _dbContext.Set&lt;LoginCredentialsEntity&gt;().Where(user =&gt; user.CustomerId == customerId).FirstOrDefault();
+                if (loginCredentials != null)
+                {
+                    return loginCredentials.SecurityMessage;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks weather the login credentials entered by the user are correct or not
+        public bool ValidateUserToLogin(long customerId, string password)
+        {
+            try
+            {
+                LoginCredentialsEntity? loginCredentials = _dbContext.Set&lt;LoginCredentialsEntity&gt;().Where(user =&gt; user.CustomerId == customerId &amp;&amp; user.CustomerPassword == password).FirstOrDefault();
+                if (loginCredentials != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether the user exists or not - Used for forgot customer ID
+        public bool CheckUserExistenceWithAadhar(long aadharNumber)
+        {
+            try
+            {
+                BasicDetailsEntity? basicDetails = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(user =&gt; user.AadharNumber == aadharNumber).FirstOrDefault();
+                if (basicDetails != null)
+                    return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Gives customer ID of the customer based on their aadhar number
+        public long GetCustomerId(long aadharNumber)
+        {
+            try
+            {
+                long customerId = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.AadharNumber == aadharNumber).Select(customer =&gt; customer.CustomerId).FirstOrDefault();
+                return customerId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Resets the password of the customer - Forgot Password
+        public bool ResetPassword(long customerId, string password)
+        {
+            try
+            {
+                LoginCredentialsEntity loginCredentials = _dbContext.Set&lt;LoginCredentialsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                loginCredentials.CustomerPassword = password;
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,78,1],[15,9,15,10,1],[16,13,16,36,1],[17,9,17,10,1],[20,9,20,10,1],[22,13,22,14,1],[23,17,23,160,1],[24,17,24,45,0],[25,17,25,18,0],[26,21,26,33,0],[28,17,28,30,0],[30,13,30,33,1],[31,13,31,14,1],[32,17,32,49,1],[34,9,34,10,0],[37,9,37,10,0],[39,13,39,14,0],[40,17,40,173,0],[41,17,41,46,0],[42,17,42,18,0],[43,21,43,33,0],[45,17,45,30,0],[47,13,47,32,0],[48,13,48,14,0],[49,17,49,49,0],[51,9,51,10,0],[54,9,54,10,0],[56,13,56,14,0],[57,17,57,213,0],[58,17,58,74,0],[59,17,59,80,0],[60,17,60,42,0],[61,17,61,29,0],[63,13,63,33,0],[64,13,64,14,0],[65,17,65,49,0],[67,9,67,10,0],[70,9,70,10,0],[72,13,72,14,0],[73,17,73,163,0],[74,17,74,46,0],[75,17,75,18,0],[76,21,76,61,0],[78,17,78,29,0],[80,13,80,33,0],[81,13,81,14,0],[82,17,82,49,0],[84,9,84,10,0],[87,9,87,10,0],[89,13,89,14,0],[90,17,90,200,0],[91,17,91,46,0],[92,17,92,18,0],[93,21,93,33,0],[95,17,95,30,0],[97,13,97,33,0],[98,13,98,14,0],[99,17,99,49,0],[101,9,101,10,0],[104,9,104,10,0],[106,13,106,14,0],[107,17,107,155,0],[108,17,108,42,0],[109,21,109,33,0],[110,17,110,30,0],[112,13,112,33,0],[113,13,113,14,0],[114,17,114,49,0],[116,9,116,10,0],[119,9,119,10,0],[121,13,121,14,0],[122,17,122,186,0],[123,17,123,35,0],[125,13,125,33,0],[126,13,126,14,0],[127,17,127,49,0],[129,9,129,10,0],[132,9,132,10,0],[134,13,134,14,0],[135,17,135,161,0],[136,17,136,62,0],[137,17,137,42,0],[138,17,138,29,0],[140,13,140,33,0],[141,13,141,14,0],[142,17,142,49,0],[144,9,144,10,0]]);
+    </script>
+  </body>
+</html>

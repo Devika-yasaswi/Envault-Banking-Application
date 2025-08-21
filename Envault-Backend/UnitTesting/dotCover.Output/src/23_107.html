@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\Envault-Backend\Controllers\AdminController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using BusinessLogicLayer;
+using CoreModels;
+using CoreModels.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Envault_Backend.Controllers
+{
+    [Route(&quot;api/[controller]&quot;)]
+    [ApiController]
+    public class AdminController : ControllerBase
+    {
+        private readonly AdminService _adminService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger&lt;AdminController&gt; _logger;
+        public AdminController(IUnitOfWork unitOfWork, IConfiguration configuration, ILogger&lt;AdminController&gt; logger)
+        {
+            _adminService = new AdminService(unitOfWork);
+            _configuration = configuration;
+            _logger = logger;
+        }
+        [HttpGet]
+        [Route(&quot;GetAllPendingRequests&quot;)]
+        public GenericResponse GetAllPendingRequests()
+        {
+            try
+            {
+                List&lt;KYCEntity&gt; pendingRequests = _adminService.GetAllPendingRequests();
+                return new GenericResponse { Status = true, Data = pendingRequests };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpGet]
+        [Route(&quot;GetAllApprovedRequests&quot;)]
+        public GenericResponse GetAllApprovedRequests()
+        {
+            try
+            {
+                List&lt;KYCEntity&gt; approvedRequests = _adminService.GetAllApprovedRequests();
+                return new GenericResponse { Status = true, Data = approvedRequests };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpGet]
+        [Route(&quot;GetAllRejectedRequests&quot;)]
+        public GenericResponse GetAllRejectedRequests()
+        {
+            try
+            {
+                List&lt;KYCEntity&gt; rejectedRequests = _adminService.GetAllRejectedRequests();
+                return new GenericResponse { Status = true, Data = rejectedRequests };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpGet]
+        [Route(&quot;GetCustomerDetails&quot;)]
+        public GenericResponse GetCustomerDetails(long customerId)
+        {
+            try
+            {
+                BasicDetailsEntity customerDetails = _adminService.GetCustomerDetails(customerId);
+                return new GenericResponse { Status = true, Data = customerDetails };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPut]
+        [Route(&quot;ApproveRequest&quot;)]
+        public GenericResponse ApproveRequest(long customerId)
+        {
+            try
+            {
+                _adminService.ApproveRequest(customerId);
+                return new GenericResponse { Status = true, Data = _configuration[&quot;GenericMessages:Values:kycApproved&quot;] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPut]
+        [Route(&quot;RejectRequest&quot;)]
+        public GenericResponse RejectRequest(long customerId)
+        {
+            try
+            {
+                _adminService.RejectRequest(customerId);
+                return new GenericResponse { Status = true, Data = _configuration[&quot;GenericMessages:Values:kycRejected&quot;] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,118,1],[18,9,18,10,1],[19,13,19,58,1],[20,13,20,44,1],[21,13,21,30,1],[22,9,22,10,1],[26,9,26,10,1],[28,13,28,14,1],[29,17,29,89,1],[30,17,30,86,1],[32,13,32,33,1],[33,13,33,14,1],[34,17,34,46,1],[35,17,35,105,1],[37,9,37,10,1],[41,9,41,10,1],[43,13,43,14,1],[44,17,44,91,1],[45,17,45,87,1],[47,13,47,33,1],[48,13,48,14,1],[49,17,49,46,1],[50,17,50,105,1],[52,9,52,10,1],[56,9,56,10,1],[58,13,58,14,1],[59,17,59,91,1],[60,17,60,87,1],[62,13,62,33,1],[63,13,63,14,1],[64,17,64,46,1],[65,17,65,105,1],[67,9,67,10,1],[71,9,71,10,1],[73,13,73,14,1],[74,17,74,99,1],[75,17,75,86,1],[77,13,77,33,1],[78,13,78,14,1],[79,17,79,46,1],[80,17,80,105,1],[82,9,82,10,1],[86,9,86,10,1],[88,13,88,14,1],[89,17,89,58,1],[90,17,90,123,1],[92,13,92,33,1],[93,13,93,14,1],[94,17,94,46,1],[95,17,95,105,1],[97,9,97,10,1],[101,9,101,10,1],[103,13,103,14,1],[104,17,104,57,1],[105,17,105,123,1],[107,13,107,33,1],[108,13,108,14,1],[109,17,109,46,1],[110,17,110,105,1],[112,9,112,10,1]]);
+    </script>
+  </body>
+</html>

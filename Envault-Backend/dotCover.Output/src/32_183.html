@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\BusinessLogicLayer\TokenService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogicLayer
+{
+    public class TokenService
+    {
+        private readonly IConfiguration _configuration;
+        public TokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public virtual string GetToken(string userName, bool isCustomer)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection(&quot;Jwt&quot;).GetSection(&quot;Key&quot;).Value));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, isCustomer ? &quot;Customer&quot; : &quot;Admin&quot;)
+            };
+            var token = new JwtSecurityToken(
+                issuer: _configuration.GetSection(&quot;Jwt&quot;).GetSection(&quot;Issuer&quot;).Value,
+                audience: _configuration[&quot;Jwt:Audience&quot;],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: credentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,58,1],[17,9,17,10,1],[18,13,18,44,1],[19,9,19,10,1],[22,9,22,10,1],[23,13,23,138,1],[24,13,24,98,1],[25,13,29,15,1],[30,13,36,15,1],[37,13,37,68,1],[38,9,38,10,1]]);
+    </script>
+  </body>
+</html>

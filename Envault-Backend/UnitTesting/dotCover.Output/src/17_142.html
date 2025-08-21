@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\AdminTest\AdminControllerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels;
+using DataAccessLayer.Infrastructure;
+using Envault_Backend.Controllers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnitTesting.AdminTest
+{
+    public class AdminControllerTest
+    {
+        private AdminController _adminController;
+        private Mock&lt;IAdminRepository&gt; _adminRepository;
+        private Mock&lt;IUnitOfWork&gt; _unitOfWork;
+        private Mock&lt;IConfiguration&gt; _mockConfig;
+        private Mock&lt;ILogger&lt;AdminController&gt;&gt; _logger;
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+
+        }
+        [SetUp]
+        public void ReintializeTest()
+        {
+            _unitOfWork = new Mock&lt;IUnitOfWork&gt;();
+            _mockConfig = new Mock&lt;Microsoft.Extensions.Configuration.IConfiguration&gt;();
+            _logger = new Mock&lt;ILogger&lt;AdminController&gt;&gt;();
+
+            var configSection = new Mock&lt;IConfigurationSection&gt;();
+            configSection.Setup(a =&gt; a.GetSection(&quot;key&quot;).Value).Returns(&quot;Devika@123#$%^&amp;*&amp;^%$#$%^&amp;*&amp;^%$#%^&amp;*(*&amp;$#@#%^&amp;*&amp;^$#%^&amp;*&amp;^$#$%^&amp;*&amp;^%$#$%&amp;*&amp;^$#$%&amp;*&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Issuer&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Audience&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            _mockConfig.Setup(a =&gt; a.GetSection(&quot;Jwt&quot;)).Returns(configSection.Object);
+
+            _adminController = new AdminController(_unitOfWork.Object, configSection.Object, _logger.Object);
+            _adminRepository = new Mock&lt;IAdminRepository&gt;();
+            _unitOfWork.Setup(a =&gt; a.AdminRepository).Returns(_adminRepository.Object);
+        }
+        [Test]
+        public void GetAllPendingRequests()
+        {
+
+        }
+        [Test]
+        public void GetAllPendingRequests_Exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.GetAllPendingRequests()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.GetAllPendingRequests();
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void GetAllApprovedRequests()
+        {
+
+        }
+        [Test]
+        public void GetAllApprovedRequests_exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.GetAllApprovedRequests()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.GetAllApprovedRequests();
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void GetAllRejectedRequests()
+        {
+
+        }
+        [Test]
+        public void GetAllRejectedRequests_Exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.GetAllRejectedRequests()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.GetAllRejectedRequests();
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void GetCustomerDetails()
+        {
+
+        }
+        [Test]
+        public void GetCustomerDetails_Exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.GetCustomerDetails(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.GetCustomerDetails(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void ApproveRequest()
+        {
+
+        }
+        [Test]
+        public void ApproveRequest_Exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.ApproveRequest(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.ApproveRequest(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+        [Test]
+        public void RejectRequest()
+        {
+
+        }
+        [Test]
+        public void RejectRequest_Exception()
+        {
+            _adminRepository.Setup(customer =&gt; customer.RejectRequest(0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _adminController.RejectRequest(0);
+            Assert.That(response, Is.InstanceOf&lt;GenericResponse&gt;());
+            Assert.That(response.Status, Is.False);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[25,9,25,10,1],[27,9,27,10,1],[30,9,30,10,1],[31,13,31,51,1],[32,13,32,89,1],[33,13,33,60,1],[35,13,35,67,1],[36,13,36,157,1],[37,13,37,92,1],[38,13,38,94,1],[39,13,39,87,1],[41,13,41,110,1],[42,13,42,61,1],[43,13,43,88,1],[44,9,44,10,1],[47,9,47,10,1],[49,9,49,10,1],[52,9,52,10,1],[53,13,53,128,1],[54,13,54,69,1],[55,13,55,69,1],[56,13,56,52,1],[57,9,57,10,1],[60,9,60,10,1],[62,9,62,10,1],[65,9,65,10,1],[66,13,66,129,1],[67,13,67,70,1],[68,13,68,69,1],[69,13,69,52,1],[70,9,70,10,1],[73,9,73,10,1],[75,9,75,10,1],[78,9,78,10,1],[79,13,79,129,1],[80,13,80,70,1],[81,13,81,69,1],[82,13,82,52,1],[83,9,83,10,1],[86,9,86,10,1],[88,9,88,10,1],[91,9,91,10,1],[92,13,92,126,1],[93,13,93,67,1],[94,13,94,69,1],[95,13,95,52,1],[96,9,96,10,1],[99,9,99,10,1],[101,9,101,10,1],[104,9,104,10,1],[105,13,105,122,1],[106,13,106,63,1],[107,13,107,69,1],[108,13,108,52,1],[109,9,109,10,1],[112,9,112,10,1],[114,9,114,10,1],[117,9,117,10,1],[118,13,118,121,1],[119,13,119,62,1],[120,13,120,69,1],[121,13,121,52,1],[122,9,122,10,1]]);
+    </script>
+  </body>
+</html>

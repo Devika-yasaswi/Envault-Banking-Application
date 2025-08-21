@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\Utils\DataIntializer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CoreModels.Entities;
+using DataAccessLayer.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnitTesting.Utils
+{
+    public class DataIntializer
+    {
+        public static IQueryable&lt;LoginCredentialsEntity&gt; GetLoginCredentials()
+        {
+            IQueryable&lt;LoginCredentialsEntity&gt; loginCredentials = new List&lt;LoginCredentialsEntity&gt;
+            {
+                new() {CustomerId = 10000001 , CustomerPassword = &quot;ABC@123k&quot;, SecurityMessage= &quot;Welcome&quot;},
+                new() {CustomerId = 10000002 , CustomerPassword = &quot;XYC@12uik&quot;, SecurityMessage= &quot;Hello&quot;},
+                new() {CustomerId = 10000003 , CustomerPassword = &quot;PGee@123r&quot;, SecurityMessage= &quot;February&quot;}
+            }.AsQueryable();
+            return loginCredentials;
+        }
+        public static IQueryable&lt;BasicDetailsEntity&gt; GetBasicDetails()
+        {
+            IQueryable&lt;BasicDetailsEntity&gt; basicDetails = new List&lt;BasicDetailsEntity&gt;
+            {
+                new() {CustomerId = 10000001, CustomerName = &quot;Sri Ram&quot;, DateOfBirth = DateOnly.Parse(&quot;2000-01-01&quot;), Gender = &quot;Male&quot;, AadharNumber = 981234567890, MobileNumber = 9876543210, PANNumber = &quot;MKTPK0515M&quot;, CustomerEmail = &quot;sriram@gmail.com&quot;, EmployementType = &quot;Private Sector&quot;, AnnualIncome = 123456, Nationality = true, TaxResidentOfIndia = true}
+            }.AsQueryable();
+            return basicDetails;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[16,13,21,29,1],[22,13,22,37,1],[23,9,23,10,1],[25,9,25,10,1],[26,13,29,29,1],[30,13,30,33,1],[31,9,31,10,1]]);
+    </script>
+  </body>
+</html>

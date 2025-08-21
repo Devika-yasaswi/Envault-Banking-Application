@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\BusinessLogicLayer\AccountOpeningService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using CoreModels.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLogicLayer
+{
+    public class AccountOpeningService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        public AccountOpeningService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+        public BasicDetailsEntity? CheckUserExistence(long aadharNumber, long mobileNumber, DateOnly dateOfBirth)
+        {
+            return _unitOfWork.AccountOpeningRepository.CheckUserExistence(aadharNumber, mobileNumber, dateOfBirth);
+        }
+        public bool IsUniqueEmail(string email)
+        {
+            return _unitOfWork.AccountOpeningRepository.IsUniqueEmail(email);
+        }
+        public bool IsUniquePANNumber(string panNumber)
+        {
+            return _unitOfWork.AccountOpeningRepository.IsUniquePANNumber(panNumber);
+        }
+        public List&lt;BranchDetails&gt; GetAllBranches()
+        {
+            return _unitOfWork.AccountOpeningRepository.GetAllBranches();
+        }
+        public AccountsEntity GenerateAccountNumber(AccountsEntity accountDetails)
+        {
+            return _unitOfWork.AccountOpeningRepository.GenerateAccountNumber(accountDetails);
+        }
+        public Object CreateNewAccount(BasicDetailsEntity basicDetails)
+        {
+            return _unitOfWork.AccountOpeningRepository.CreateNewAccount(basicDetails);
+        }
+        public Object CreateAnotherAccount(AccountsEntity account)
+        {
+            return _unitOfWork.AccountOpeningRepository.CreateAnotherAccount(account);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,61,1],[16,9,16,10,1],[17,13,17,38,1],[18,9,18,10,1],[20,9,20,10,1],[21,13,21,117,1],[22,9,22,10,1],[24,9,24,10,1],[25,13,25,78,1],[26,9,26,10,1],[28,9,28,10,1],[29,13,29,86,1],[30,9,30,10,1],[32,9,32,10,1],[33,13,33,74,1],[34,9,34,10,1],[36,9,36,10,0],[37,13,37,95,0],[38,9,38,10,0],[40,9,40,10,1],[41,13,41,88,1],[42,9,42,10,1],[44,9,44,10,0],[45,13,45,87,0],[46,9,46,10,0]]);
+    </script>
+  </body>
+</html>

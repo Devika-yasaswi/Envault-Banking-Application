@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\CoreModels\Entities\AccountTypeEntity.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CoreModels.Entities
+{
+    [Table(&quot;Envault_Tbl_AccountType&quot;)]
+    public class AccountTypeEntity
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int AccountTypeId { get; set; }
+        public string AccountType { get; set; }
+        public bool IsActive { get; set; } = true;
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public string? ModifiedBy { get; set; }
+        public DateTime ModifiedOn { get; set; } = DateTime.UtcNow;
+        [ForeignKey(&quot;AccountTypeId&quot;)]
+        public virtual ICollection&lt;AccountsEntity&gt; Accounts { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,36,16,40,0],[16,41,16,45,0],[17,37,17,41,0],[17,42,17,46,0],[18,32,18,36,0],[18,37,18,41,0],[18,46,18,50,0],[19,36,19,40,0],[19,41,19,45,0],[20,37,20,41,0],[20,42,20,46,0],[20,51,20,66,0],[21,37,21,41,0],[21,42,21,46,0],[22,38,22,42,0],[22,43,22,47,0],[22,52,22,67,0],[24,63,24,67,0],[24,68,24,72,0]]);
+    </script>
+  </body>
+</html>

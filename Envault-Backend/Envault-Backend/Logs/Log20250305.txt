@@ -1,0 +1,1 @@
+2025-03-05T22:56:30.6325174+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\LoginAndRegistrationTest\LoginAndRegistrationRepositoryTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Castle.Core.Resource;
+using CoreModels.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnitTesting.Utils;
+
+namespace UnitTesting.LoginAndRegistrationTest
+{
+    public class LoginAndRegistrationRepositoryTest : DbContextMock
+    {
+
+        [Test]
+        [TestCase(10000001)]
+        [TestCase(10000000)]
+        public void CheckUserExistence(long customerId)
+        {
+            var result = _loginAndRegistrationRepository.CheckUserExistence(customerId);
+            if(customerId == 10000001)
+            {
+                Assert.That(result, Is.True);
+            }
+            else if (customerId == 10000000)
+            {
+                Assert.That(result, Is.False);
+            }
+        }
+        [Test]
+        public void CheckUserExistence_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;BasicDetailsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.CheckUserExistence(0));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(10000001)]
+        [TestCase(10000000)]
+        public void IsRegisteredCustomer(long customerId)
+        {
+            var result = _loginAndRegistrationRepository.IsRegisteredCustomer(customerId);
+            if (customerId == 10000001)
+            {
+                Assert.That(result, Is.True);
+            }
+            else if (customerId == 10000000)
+            {
+                Assert.That(result, Is.False);
+            }
+        }
+        [Test]
+        public void IsRegisteredCustomer_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;LoginCredentialsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.IsRegisteredCustomer(0));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        public void RegisterNewUser()
+        {
+            var loginCredentials = new LoginCredentialsEntity
+            {
+                CustomerId = 10000002,
+                CustomerPassword = &quot;ABC@xyz&quot;,
+                SecurityMessage = &quot;Hello people&quot;
+            };
+            var result = _loginAndRegistrationRepository.RegisterNewUser(loginCredentials);
+            Assert.That(result, Is.True);
+        }
+        [Test]
+        public void RegisterNewUser_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.SaveChanges()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.RegisterNewUser(_loginCredentials.First()));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(10000001)]
+        [TestCase(10000000)]
+        public void GetUserSecurityMessage(long customerId)
+        {
+            var result = _loginAndRegistrationRepository.GetUserSecurityMessage(customerId);
+            if (customerId == 10000001)
+            {
+                Assert.That(result, Is.EqualTo(&quot;Welcome&quot;));
+            }
+            else if (customerId == 10000000)
+            {
+                Assert.That(result, Is.Null);
+            }
+        }
+        [Test]
+        public void GetUserSecurityMessage_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;LoginCredentialsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.GetUserSecurityMessage(123));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(10000001, &quot;ABC@123k&quot;)]
+        [TestCase(10000000, &quot;abc&quot;)]
+        public void ValidateUserToLogin(long customerId, string password)
+        {
+            var result = _loginAndRegistrationRepository.ValidateUserToLogin(customerId, password);
+            if (customerId == 10000001)
+            {
+                Assert.That(result, Is.True);
+            }
+            else if (customerId == 10000000)
+            {
+                Assert.That(result, Is.False);
+            }
+        }
+        [Test]
+        public void ValidateUserToLogin_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;LoginCredentialsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.ValidateUserToLogin(123, &quot;abc&quot;));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(981234567890)]
+        [TestCase(981234567891)]
+        public void CheckUserExistenceWithAadhar(long aadharNumber)
+        {
+            var result = _loginAndRegistrationRepository.CheckUserExistenceWithAadhar(aadharNumber);
+            if (aadharNumber == 981234567890)
+            {
+                Assert.That(result, Is.True);
+            }
+            else if (aadharNumber == 981234567891)
+            {
+                Assert.That(result, Is.False);
+            }
+        }
+        [Test]
+        public void CheckUserExistenceWithAadhar_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;BasicDetailsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.CheckUserExistenceWithAadhar(123));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(981234567890)]
+        [TestCase(981234567891)]
+        public void GetCustomerId(long aadharNumber)
+        {
+            var result = _loginAndRegistrationRepository.GetCustomerId(aadharNumber);
+            if (aadharNumber == 981234567890)
+            {
+                Assert.That(result, Is.EqualTo(10000001));
+            }
+            else if (aadharNumber == 981234567891)
+            {
+                Assert.That(result, Is.EqualTo(0));
+            }
+        }
+        [Test]
+        public void GetCustomerId_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;BasicDetailsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.GetCustomerId(123));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+        [Test]
+        [TestCase(10000002, &quot;ABC@123&quot;)]
+        public void ResetPassword(long customerId, string password)
+        {
+            var result = _loginAndRegistrationRepository.ResetPassword(customerId, password);
+            Assert.That(result, Is.True);
+        }
+        [Test]
+        public void ResetPassword_Exception()
+        {
+            _mockContext.Setup(a =&gt; a.Set&lt;LoginCredentialsEntity&gt;()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var result = Assert.Throws&lt;Exception&gt;(() =&gt; _loginAndRegistrationRepository.ResetPassword(123, &quot;abc&quot;));
+            Assert.That(result.Message, Is.EqualTo(&quot;Something went wrong&quot;));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,10,1],[20,13,20,89,1],[21,13,21,39,1],[22,13,22,14,1],[23,17,23,46,1],[24,13,24,14,1],[25,18,25,45,1],[26,13,26,14,1],[27,17,27,47,1],[28,13,28,14,1],[29,9,29,10,1],[32,9,32,10,1],[33,13,33,112,1],[34,13,34,57,1],[34,57,34,110,1],[34,110,34,112,1],[35,13,35,77,1],[36,9,36,10,1],[41,9,41,10,1],[42,13,42,91,1],[43,13,43,40,1],[44,13,44,14,1],[45,17,45,46,1],[46,13,46,14,1],[47,18,47,45,1],[48,13,48,14,1],[49,17,49,47,1],[50,13,50,14,1],[51,9,51,10,1],[54,9,54,10,1],[55,13,55,116,1],[56,13,56,57,1],[56,57,56,112,1],[56,112,56,114,1],[57,13,57,77,1],[58,9,58,10,1],[61,9,61,10,1],[62,13,67,15,1],[68,13,68,92,1],[69,13,69,42,1],[70,9,70,10,1],[73,9,73,10,1],[74,13,74,100,1],[75,13,75,57,1],[75,57,75,131,1],[75,131,75,133,1],[76,13,76,77,1],[77,9,77,10,1],[82,9,82,10,1],[83,13,83,93,1],[84,13,84,40,1],[85,13,85,14,1],[86,17,86,60,1],[87,13,87,14,1],[88,18,88,45,1],[89,13,89,14,1],[90,17,90,46,1],[91,13,91,14,1],[92,9,92,10,1],[95,9,95,10,1],[96,13,96,116,1],[97,13,97,57,1],[97,57,97,116,1],[97,116,97,118,1],[98,13,98,77,1],[99,9,99,10,1],[104,9,104,10,1],[105,13,105,100,1],[106,13,106,40,1],[107,13,107,14,1],[108,17,108,46,1],[109,13,109,14,1],[110,18,110,45,1],[111,13,111,14,1],[112,17,112,47,1],[113,13,113,14,1],[114,9,114,10,1],[117,9,117,10,1],[118,13,118,116,1],[119,13,119,57,1],[119,57,119,120,1],[119,120,119,122,1],[120,13,120,77,1],[121,9,121,10,1],[126,9,126,10,1],[127,13,127,101,1],[128,13,128,46,1],[129,13,129,14,1],[130,17,130,46,1],[131,13,131,14,1],[132,18,132,51,1],[133,13,133,14,1],[134,17,134,47,1],[135,13,135,14,1],[136,9,136,10,1],[139,9,139,10,1],[140,13,140,112,1],[141,13,141,57,1],[141,57,141,122,1],[141,122,141,124,1],[142,13,142,77,1],[143,9,143,10,1],[148,9,148,10,1],[149,13,149,86,1],[150,13,150,46,1],[151,13,151,14,1],[152,17,152,59,1],[153,13,153,14,1],[154,18,154,51,1],[155,13,155,14,1],[156,17,156,52,1],[157,13,157,14,1],[158,9,158,10,1],[161,9,161,10,1],[162,13,162,112,1],[163,13,163,57,1],[163,57,163,107,1],[163,107,163,109,1],[164,13,164,77,1],[165,9,165,10,1],[169,9,169,10,1],[170,13,170,94,1],[171,13,171,42,1],[172,9,172,10,1],[175,9,175,10,1],[176,13,176,116,1],[177,13,177,57,1],[177,57,177,114,1],[177,114,177,116,1],[178,13,178,77,1],[179,9,179,10,1]]);
+    </script>
+  </body>
+</html>

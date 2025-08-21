@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\Envault-Backend\Controllers\AccountOpeningController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using BusinessLogicLayer;
+using CoreModels.Entities;
+using CoreModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using CoreModels.Models;
+
+namespace Envault_Backend.Controllers
+{
+    [Route(&quot;api/[controller]&quot;)]
+    [ApiController]
+    public class AccountOpeningController : ControllerBase
+    {
+        private readonly AccountOpeningService _accountOpeningService;
+        private readonly IConfiguration _configuration;
+        private readonly TokenService _tokenService;
+        private readonly ILogger&lt;AccountOpeningController&gt; _logger;
+        public AccountOpeningController(IUnitOfWork unitOfWork, IConfiguration configuration, ILogger&lt;AccountOpeningController&gt; logger)
+        {
+            _accountOpeningService = new AccountOpeningService(unitOfWork);
+            _configuration = configuration;
+            _tokenService = new TokenService(configuration);
+            _logger = logger;
+        }
+        [HttpPost]
+        [Route(&quot;CheckUserExistence&quot;)]
+        public async Task&lt;GenericResponse&gt; CheckUserExistence(long aadharNumber, long mobileNumber, DateOnly dateOfBirth)
+        {
+            try
+            {
+                BasicDetailsEntity? userDetails = await Task.FromResult(_accountOpeningService.CheckUserExistence(aadharNumber, mobileNumber, dateOfBirth));
+                if (userDetails != null)
+                {
+                    return new GenericResponse { Status = true, Data = userDetails  };
+                }
+                return new GenericResponse { Status = true, Data = userDetails };
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPost]
+        [Route(&quot;IsUniqueEmail&quot;)]
+        public async Task&lt;GenericResponse&gt; IsUniqueEmail(string email)
+        {
+            try
+            {
+                bool result = await Task.FromResult(_accountOpeningService.IsUniqueEmail(email));
+                if (result)
+                    return new GenericResponse { Status = true, Data = result };
+                return new GenericResponse() { Status = true, Data = _configuration[&quot;GenericMessages:Values:duplicateEmailError&quot;] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPost]
+        [Route(&quot;IsUniquePANNumber&quot;)]
+        public async Task&lt;GenericResponse&gt; IsUniquePANNumber(string panNumber)
+        {
+            try
+            {
+                bool result = await Task.FromResult(_accountOpeningService.IsUniquePANNumber(panNumber));
+                if (result)
+                    return new GenericResponse { Status = true, Data = result };
+                return new GenericResponse() { Status = true, Data = _configuration[&quot;GenericMessages:Values:duplicatePANError&quot;] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpGet]
+        [Route(&quot;GetAllBranches&quot;)]
+        public async Task&lt;GenericResponse&gt; GetAllBranches()
+        {
+            try
+            {
+                List&lt;BranchDetails&gt; branches = await Task.FromResult(_accountOpeningService.GetAllBranches());
+                if (branches.Count != 0)
+                {
+                    return new GenericResponse { Status = true, Data = branches };
+                }
+                return new GenericResponse { Status = true, Data = _configuration[&quot;GenericMessages:Values:LoadingBranchFail&quot;] };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPost]
+        [Route(&quot;CreateNewAccount&quot;)]
+        public async Task&lt;GenericResponse&gt; CreateNewAccount(BasicDetailsEntity basicDetails)
+        {
+            try
+            {
+                Object accountDetails = await Task.FromResult(_accountOpeningService.CreateNewAccount(basicDetails));
+                if (accountDetails != null)
+                {
+                    return new GenericResponse { Status = true, Data = accountDetails };
+                }
+                return new GenericResponse();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+        [HttpPost]
+        [Route(&quot;CreateAnotherAccount&quot;)]
+        public async Task&lt;GenericResponse&gt; CreateAnotherAccount(AccountsEntity account)
+        {
+            try
+            {
+                Object accountDetails = await Task.FromResult(_accountOpeningService.CreateAnotherAccount(account));
+                if (accountDetails != null)
+                {
+                    return new GenericResponse() { Status = true, Data = accountDetails };
+                }
+                return new GenericResponse();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new GenericResponse { Status = false, Error = new Error() { Description = &quot;&quot; } };
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,136,0],[20,9,20,10,0],[21,13,21,76,0],[22,13,22,44,0],[23,13,23,61,0],[24,13,24,30,0],[25,9,25,10,0],[29,9,29,10,0],[31,13,31,14,0],[32,17,32,157,0],[33,17,33,41,0],[34,17,34,18,0],[35,21,35,87,0],[37,17,37,82,0],[39,13,39,32,0],[40,13,40,14,0],[41,17,41,46,0],[42,17,42,105,0],[44,9,44,10,0],[48,9,48,10,0],[50,13,50,14,0],[51,17,51,98,0],[52,17,52,28,0],[53,21,53,81,0],[54,17,54,133,0],[56,13,56,33,0],[57,13,57,14,0],[58,17,58,46,0],[59,17,59,105,0],[61,9,61,10,0],[65,9,65,10,0],[67,13,67,14,0],[68,17,68,106,0],[69,17,69,28,0],[70,21,70,81,0],[71,17,71,131,0],[73,13,73,33,0],[74,13,74,14,0],[75,17,75,46,0],[76,17,76,105,0],[78,9,78,10,0],[82,9,82,10,0],[84,13,84,14,0],[85,17,85,111,0],[86,17,86,41,0],[87,17,87,18,0],[88,21,88,83,0],[90,17,90,129,0],[92,13,92,33,0],[93,13,93,14,0],[94,17,94,46,0],[95,17,95,105,0],[97,9,97,10,0],[101,9,101,10,0],[103,13,103,14,0],[104,17,104,118,0],[105,17,105,44,0],[106,17,106,18,0],[107,21,107,89,0],[109,17,109,46,0],[111,13,111,33,0],[112,13,112,14,0],[113,17,113,46,0],[114,17,114,105,0],[116,9,116,10,0],[120,9,120,10,0],[122,13,122,14,0],[123,17,123,117,0],[124,17,124,44,0],[125,17,125,18,0],[126,21,126,91,0],[128,17,128,46,0],[130,13,130,33,0],[131,13,131,14,0],[132,17,132,46,0],[133,17,133,105,0],[135,9,135,10,0]]);
+    </script>
+  </body>
+</html>

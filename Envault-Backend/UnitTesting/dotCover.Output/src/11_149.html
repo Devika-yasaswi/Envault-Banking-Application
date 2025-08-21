@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\UserValidationTest\UserValidationControllerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using Castle.Core.Logging;
+using CoreModels;
+using DataAccessLayer.Infrastructure;
+using Envault_Backend.Controllers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnitTesting.UserValidationTest
+{
+    public class UserValidationControllerTest
+    {
+        private UserValidationController _userValidationController;
+        private Mock&lt;IUserValidationRepository&gt; _userValidationRepository;
+        private Mock&lt;IUnitOfWork&gt; _unitOfWork;
+        private Mock&lt;IConfiguration&gt; _mockConfig;
+        private Mock&lt;ILogger&lt;UserValidationController&gt;&gt; _logger;
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+
+        }
+        [SetUp]
+        public void ReintializeTest()
+        {
+            _unitOfWork = new Mock&lt;IUnitOfWork&gt;();
+            _mockConfig = new Mock&lt;Microsoft.Extensions.Configuration.IConfiguration&gt;();
+            _logger = new Mock&lt;ILogger&lt;UserValidationController&gt;&gt;();
+
+            var configSection = new Mock&lt;IConfigurationSection&gt;();
+            configSection.Setup(a =&gt; a.GetSection(&quot;Key&quot;).Value).Returns(&quot;Devika@123#$%^&amp;*&amp;^%$#$%^&amp;*&amp;^%$#%^&amp;*(*&amp;$#@#%^&amp;*&amp;^$#%^&amp;*&amp;^$#$%^&amp;*&amp;^%$#$%&amp;*&amp;^$#$%&amp;*&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Issuer&quot;).Value).Returns(&quot;Devika@12345&quot;);
+            configSection.Setup(a =&gt; a.GetSection(&quot;Audience&quot;).Value).Returns(&quot;Devika@12345&quot;);
+
+            configSection.Setup(a =&gt; a[&quot;GenericMessages:Values:OTPMismatched&quot;]).Returns(&quot;The OTP you entered does not match&quot;);
+            configSection.Setup(a =&gt; a[&quot;GenericMessages:Values:CAPTCHAMismatched&quot;]).Returns(&quot;CAPTCHA mismatched. Please try again&quot;);
+            
+            _mockConfig.Setup(a =&gt; a.GetSection(&quot;Jwt&quot;)).Returns(configSection.Object);
+
+            _userValidationController = new UserValidationController(_unitOfWork.Object, configSection.Object, _logger.Object);
+            _userValidationRepository = new Mock&lt;IUserValidationRepository&gt;();
+            _unitOfWork.Setup(a =&gt; a.UserValidationRepository).Returns(_userValidationRepository.Object);
+
+            UserValidationController.generatedCaptcha = &quot;Asdfg4&quot;;
+        }
+        [Test]
+        public void GenerateOtp()
+        {
+            _userValidationRepository.Setup(customer =&gt; customer.GenerateOtp()).Returns(123456);
+            var response = _userValidationController.GenerateOtp();
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+            _userValidationRepository.Setup(customer =&gt; customer.GenerateOtp()).Returns(0);
+            var failResponse = _userValidationController.GenerateOtp();
+            Assert.That(failResponse, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(failResponse.Result.Status, Is.True);
+        }
+        [Test]
+        public void GenerateOtp_Exception()
+        {
+            _userValidationRepository.Setup(customer =&gt; customer.GenerateOtp()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _userValidationController.GenerateOtp();
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(123456)]
+        [TestCase(1111111)]
+        public void ValidateOTP_Correct_OTP(int userEnteredOtp)
+        {
+            if(userEnteredOtp == 123456)
+            {
+                _userValidationRepository.Setup(otp =&gt; otp.ValidateOtp(0,userEnteredOtp)).Returns(true);
+                var response = _userValidationController.ValidateOTP(userEnteredOtp);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if(userEnteredOtp == 1111111)
+            {
+                _userValidationRepository.Setup(otp =&gt; otp.ValidateOtp(0, userEnteredOtp)).Returns(false);
+                var response = _userValidationController.ValidateOTP(userEnteredOtp);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+                Assert.That(response.Result.Data, Is.EqualTo(&quot;The OTP you entered does not match&quot;));
+            }
+        }
+        [Test]
+        public void ValidateOTP_Exception()
+        {
+            _userValidationRepository.Setup(otp =&gt; otp.ValidateOtp(0, 0)).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _userValidationController.ValidateOTP(0);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        public void GenerateCaptcha()
+        {
+            _userValidationRepository.Setup(captcha =&gt; captcha.GenerateCaptcha()).Returns(&quot;Asdfg4&quot;);
+            var response = _userValidationController.GenerateCaptcha();
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.True);
+        }
+        [Test]
+        public void GenerateCaptcha_Exception()
+        {
+            _userValidationRepository.Setup(captcha =&gt; captcha.GenerateCaptcha()).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _userValidationController.GenerateCaptcha();
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+        [Test]
+        [TestCase(&quot;Asdfg4&quot;)]
+        [TestCase(&quot;aSRTUI&quot;)]
+        public void ValidateCaptcha_CorrectCaptcha(string userEnteredCaptcha)
+        {
+            if(userEnteredCaptcha == &quot;Asdfg4&quot;)
+            {
+                _userValidationRepository.Setup(captcha =&gt; captcha.ValidateCaptcha(It.IsAny&lt;string&gt;(), userEnteredCaptcha)).Returns(true);
+                var response = _userValidationController.ValidateCaptcha(userEnteredCaptcha);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+            }
+            else if(userEnteredCaptcha == &quot;aSRTUI&quot;)
+            {
+                _userValidationRepository.Setup(captcha =&gt; captcha.ValidateCaptcha(It.IsAny&lt;string&gt;(), userEnteredCaptcha)).Returns(false);
+                var response = _userValidationController.ValidateCaptcha(userEnteredCaptcha);
+                Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+                Assert.That(response.Result.Status, Is.True);
+                Assert.That(response.Result.Data, Is.EqualTo(&quot;CAPTCHA mismatched. Please try again&quot;));
+            }
+        }
+        [Test]
+        public void ValidateCaptcha_Exception()
+        {
+            _userValidationRepository.Setup(captcha =&gt; captcha.ValidateCaptcha(It.IsAny&lt;string&gt;(), It.IsAny&lt;string&gt;())).Throws(new Exception(&quot;Something went wrong&quot;));
+            var response = _userValidationController.ValidateCaptcha(&quot;12&quot;);
+            Assert.That(response, Is.InstanceOf&lt;Task&lt;GenericResponse&gt;&gt;());
+            Assert.That(response.Result.Status, Is.False);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,9,26,10,1],[28,9,28,10,1],[31,9,31,10,1],[32,13,32,51,1],[33,13,33,89,1],[34,13,34,69,1],[36,13,36,67,1],[37,13,37,157,1],[38,13,38,92,1],[39,13,39,94,1],[41,13,41,127,1],[42,13,42,133,1],[44,13,44,87,1],[46,13,46,128,1],[47,13,47,79,1],[48,13,48,106,1],[50,13,50,66,1],[51,9,51,10,1],[54,9,54,10,1],[55,13,55,97,1],[56,13,56,68,1],[57,13,57,75,1],[58,13,58,58,1],[59,13,59,92,1],[60,13,60,72,1],[61,13,61,79,1],[62,13,62,62,1],[63,9,63,10,1],[66,9,66,10,1],[67,13,67,127,1],[68,13,68,68,1],[69,13,69,75,1],[70,13,70,59,1],[71,9,71,10,1],[76,9,76,10,1],[77,13,77,41,1],[78,13,78,14,1],[79,17,79,105,1],[80,17,80,86,1],[81,17,81,79,1],[82,17,82,62,1],[83,13,83,14,1],[84,18,84,47,1],[85,13,85,14,1],[86,17,86,107,1],[87,17,87,86,1],[88,17,88,79,1],[89,17,89,62,1],[90,17,90,101,1],[91,13,91,14,1],[92,9,92,10,1],[95,9,95,10,1],[96,13,96,121,1],[97,13,97,69,1],[98,13,98,75,1],[99,13,99,59,1],[100,9,100,10,1],[103,9,103,10,1],[104,13,104,101,1],[105,13,105,72,1],[106,13,106,75,1],[107,13,107,58,1],[108,9,108,10,1],[111,9,111,10,1],[112,13,112,129,1],[113,13,113,72,1],[114,13,114,75,1],[115,13,115,59,1],[116,9,116,10,1],[121,9,121,10,1],[122,13,122,47,1],[123,13,123,14,1],[124,17,124,139,1],[125,17,125,94,1],[126,17,126,79,1],[127,17,127,62,1],[128,13,128,14,1],[129,18,129,52,1],[130,13,130,14,1],[131,17,131,140,1],[132,17,132,94,1],[133,17,133,79,1],[134,17,134,62,1],[135,17,135,103,1],[136,13,136,14,1],[137,9,137,10,1],[140,9,140,10,1],[141,13,141,167,1],[142,13,142,76,1],[143,13,143,75,1],[144,13,144,59,1],[145,9,145,10,1]]);
+    </script>
+  </body>
+</html>

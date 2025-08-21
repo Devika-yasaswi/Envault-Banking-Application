@@ -1,0 +1,48 @@
+# Build artifacts
+bin/
+obj/
+[Dd]ebug*/
+[Rr]elease*/
+*.log
+
+# Local/secret config (keep appsettings.json clean of secrets)
+appsettings.*.Local.json
+appsettings.Local.json
+*.Secret.json
+*.Secrets.json
+*.Private.json
+.env
+
+# IDE/Editors
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Tests & coverage
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+Coverage/
+BenchmarkDotNet.Artifacts/
+
+# Publish output
+**/publish/
+*.pubxml.user
+
+# NuGet
+packages/
+.nuget/packages/
+*.nupkg
+*.snupkg
+
+# Local databases
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,7 @@
+2025-02-27T00:19:13.2512601+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-27T00:23:26.4006820+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-27T11:54:22.8062628+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-27T13:07:19.7172699+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-27T13:07:33.4532075+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched
+2025-02-27T13:11:42.5278422+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA mismatched. Please try again
+2025-02-27T13:11:53.1679865+05:30 [Thread:] [INF] (Envault_Backend.Controllers.UserValidationController) CAPTCHA Matched

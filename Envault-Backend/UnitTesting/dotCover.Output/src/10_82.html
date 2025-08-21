@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\Envault-Backend\Program.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using DataAccessLayer.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using System.Text;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddControllers().AddJsonOptions(options =&gt;
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Configuration.AddJsonFile($&quot;Config/responseMessages.json&quot;, true, true);
+builder.Services.AddScoped&lt;IUnitOfWork, UnitOfWork&gt;();
+builder.Services.AddScoped&lt;IAccountOpeningRepository, AccountOpeningRepository&gt;();
+builder.Services.AddScoped&lt;IUserValidationRepository, UserValidationRepository&gt;();
+builder.Services.AddScoped&lt;ILoginAndRegistrationRepository, LoginAndRegistrationRepository&gt;();
+builder.Services.AddScoped&lt;ICustomerRepository, CustomerRepository&gt;();
+builder.Services.AddScoped&lt;IAdminRepository, AdminRepository&gt;();
+builder.Services.AddDbContext&lt;ApplicationDBContext&gt;(options =&gt;
+options.UseSqlServer(builder.Configuration.GetConnectionString(&quot;DefaultConnection&quot;)));
+var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+builder.Services.AddCors(options =&gt;
+{
+    options.AddPolicy(&quot;CorsPolicy&quot;,
+        builder =&gt;
+        {
+            builder.WithOrigins(&quot;http://localhost:4300&quot;, &quot;http://localhost:4301&quot;)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =&gt;
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidIssuer = builder.Configuration[&quot;Jwt:Issuer&quot;],
+            ValidAudience = builder.Configuration[&quot;Jwt:Audience&quot;],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration[&quot;Jwt:Key&quot;]))
+        };
+
+    });
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.UseCors(&quot;CorsPolicy&quot;);
+
+app.MapControllers();
+
+app.Run();
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,1,10,50,0],[14,1,15,1,0],[15,1,15,2,0],[15,2,16,5,0],[16,5,16,115,0],[16,115,17,1,0],[17,1,17,2,0],[17,2,17,4,0],[20,1,20,44,0],[21,1,21,34,0],[22,1,22,80,0],[23,1,23,55,0],[24,1,24,83,0],[25,1,25,83,0],[26,1,26,95,0],[27,1,27,71,0],[28,1,28,65,0],[29,1,30,1,0],[30,1,30,85,0],[30,85,30,87,0],[31,1,31,125,0],[32,1,32,34,0],[33,1,33,36,0],[34,1,35,1,0],[35,1,35,2,0],[35,2,36,5,0],[36,5,38,9,0],[38,9,38,10,0],[38,10,39,13,0],[39,13,41,35,0],[41,35,42,9,0],[42,9,42,10,0],[42,10,42,12,0],[42,12,43,1,0],[43,1,43,2,0],[43,2,43,4,0],[44,1,46,5,0],[46,5,46,6,0],[46,6,47,9,0],[47,9,57,11,0],[57,11,59,5,0],[59,5,59,6,0],[59,6,59,8,0],[60,1,60,37,0],[62,1,62,27,0],[65,1,65,37,0],[66,1,66,2,0],[67,5,67,22,0],[68,5,68,24,0],[69,1,69,2,0],[71,1,71,27,0],[73,1,73,24,0],[75,1,75,27,0],[77,1,77,22,0],[79,1,79,11,0]]);
+    </script>
+  </body>
+</html>

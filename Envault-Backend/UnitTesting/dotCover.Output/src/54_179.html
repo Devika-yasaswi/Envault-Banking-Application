@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\DataAccessLayer\Infrastructure\UnitOfWork.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Infrastructure
+{
+    public class UnitOfWork : IUnitOfWork
+    {
+        public IAccountOpeningRepository AccountOpeningRepository { get; set; }
+        public ILoginAndRegistrationRepository LoginAndRegistrationRepository { get; set; }
+        public IUserValidationRepository UserValidationRepository { get; set; }
+        public ICustomerRepository CustomerRepository { get; set; }
+        public IAdminRepository AdminRepository { get; set; }
+
+        public ApplicationDBContext _dbContext;
+        public UnitOfWork(ApplicationDBContext dbContext, IAccountOpeningRepository accountOpeningRepository, ILoginAndRegistrationRepository loginAndRegistrationRepository, IUserValidationRepository userValidationRepository, ICustomerRepository customerRepository, IAdminRepository adminRepository) 
+        {
+            _dbContext = dbContext;
+            AccountOpeningRepository = accountOpeningRepository;
+            LoginAndRegistrationRepository = loginAndRegistrationRepository;
+            UserValidationRepository = userValidationRepository;
+            CustomerRepository = customerRepository;
+            AdminRepository = adminRepository;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,69,13,73,0],[13,74,13,78,0],[14,81,14,85,0],[14,86,14,90,0],[15,69,15,73,0],[15,74,15,78,0],[16,57,16,61,0],[16,62,16,66,0],[17,51,17,55,0],[17,56,17,60,0],[20,9,20,300,0],[21,9,21,10,0],[22,13,22,36,0],[23,13,23,65,0],[24,13,24,77,0],[25,13,25,65,0],[26,13,26,53,0],[27,13,27,47,0],[28,9,28,10,0]]);
+    </script>
+  </body>
+</html>

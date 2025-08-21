@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\UnitTesting\Utils\DataIntializer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using CoreModels.Entities;
+using DataAccessLayer.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UnitTesting.Utils
+{
+    public class DataIntializer
+    {
+        public static IQueryable&lt;LoginCredentialsEntity&gt; GetLoginCredentials()
+        {
+            IQueryable&lt;LoginCredentialsEntity&gt; loginCredentials = new List&lt;LoginCredentialsEntity&gt;
+            {
+                new() {CustomerId = 10000001 , CustomerPassword = &quot;ABC@123k&quot;, SecurityMessage= &quot;Welcome&quot;},
+                new() {CustomerId = 10000002 , CustomerPassword = &quot;XYC@12uik&quot;, SecurityMessage= &quot;Hello&quot;},
+                new() {CustomerId = 10000003 , CustomerPassword = &quot;PGee@123r&quot;, SecurityMessage= &quot;February&quot;}
+            }.AsQueryable();
+            return loginCredentials;
+        }
+        public static IQueryable&lt;BasicDetailsEntity&gt; GetBasicDetails()
+        {
+            IQueryable&lt;BasicDetailsEntity&gt; basicDetails = new List&lt;BasicDetailsEntity&gt;
+            {
+                new() {CustomerId = 10000001, CustomerName = &quot;Sri Ram&quot;, DateOfBirth = DateOnly.Parse(&quot;1978-01-01&quot;), Gender = &quot;Male&quot;, AadharNumber = 981234567890, MobileNumber = 9876543210, PANNumber = &quot;MKTPK0515M&quot;, CustomerEmail = &quot;sriram@gmail.com&quot;, EmployementType = &quot;Private Sector&quot;, AnnualIncome = 123456, Nationality = true, TaxResidentOfIndia = true},
+                new() {CustomerId = 10000002, CustomerName = &quot;Deepak&quot;, DateOfBirth = DateOnly.Parse(&quot;2007-02-21&quot;), Gender = &quot;Male&quot;, AadharNumber = 456777642837, MobileNumber = 9876763490, PANNumber = &quot;ASDFK9124L&quot;, CustomerEmail = &quot;deepak@gmail.com&quot;, EmployementType = &quot;Public Sector&quot;, AnnualIncome = 9876543, Nationality = true, TaxResidentOfIndia =true},
+                new() {CustomerId = 10000003, CustomerName = &quot;Anjali&quot;, DateOfBirth = DateOnly.Parse(&quot;1977-02-12&quot;), Gender = &quot;Female&quot;, AadharNumber = 876876755649, MobileNumber = 7684638383, PANNumber = &quot;CVBGH1237K&quot;, CustomerEmail = &quot;anjali@gmail.com&quot;, EmployementType = &quot;Private Sector&quot;, AnnualIncome = 200000, Nationality = true, TaxResidentOfIndia = true}
+            }.AsQueryable();
+            return basicDetails;
+        }
+        public static IQueryable&lt;CustomerAddressEntity&gt; GetCustomerAddresses()
+        {
+            IQueryable&lt;CustomerAddressEntity&gt; customerAddresses = new List&lt;CustomerAddressEntity&gt;
+            {
+                new() {CustomerId = 10000001, PermanentHouseNo = &quot;2/89&quot;, PermanentStreet = &quot;Vidyanagar 1st line&quot;, PermanentCity = &quot;Singarayakonda&quot;, PermanentState = &quot;Andhra Pradesh&quot;, PermanentPincode = 897656, PresentHouseNo = &quot;2/89&quot;, PresentStreet = &quot;Vidyanagar 1st line&quot;, PresentCity = &quot;Singarayakonda&quot;, PresentState = &quot;Andhra Pradesh&quot;, PresentPincode = 897656 },
+                new() {CustomerId = 10000002, PermanentHouseNo = &quot;#25&quot;, PermanentStreet = &quot;Arundalpet&quot;, PermanentCity = &quot;Narasaraopet&quot;, PermanentState = &quot;Andhra Pradesh&quot;, PermanentPincode = 678998, PresentHouseNo = &quot;#25&quot;, PresentStreet = &quot;Arundalpet&quot;, PresentCity = &quot;Narasaraopet&quot;, PresentState = &quot;Andhra Pradesh&quot;, PresentPincode = 678998 },
+                new() {CustomerId = 10000003, PermanentHouseNo = &quot;3-25&quot;, PermanentStreet = &quot;Vidyanagar 7th line&quot;, PermanentCity = &quot;Singarayakonda&quot;, PermanentState = &quot;Andhra Pradesh&quot;, PermanentPincode = 897656, PresentHouseNo = &quot;3-25&quot;, PresentStreet = &quot;Vidyanagar 7th line&quot;, PresentCity = &quot;Singarayakonda&quot;, PresentState = &quot;Andhra Pradesh&quot;, PresentPincode = 897656 }
+            }.AsQueryable();
+            return customerAddresses;
+        }
+        public static IQueryable&lt;CustomerFamilyAndNomineeDetailsEntity&gt; GetCustomerFamilyAndNomineeDetails()
+        {
+            IQueryable&lt;CustomerFamilyAndNomineeDetailsEntity&gt; customerFamilyAndNomineeDetails = new List&lt;CustomerFamilyAndNomineeDetailsEntity&gt;
+            {
+                new() {CustomerId = 10000001, FatherName = &quot;Dasaradh&quot;, MotherName = &quot;Kousalya&quot;, SpouseName = &quot;Seetha&quot;, NomineeName = &quot;Dasaradh&quot;, NomineeDateOfBirth = DateOnly.Parse(&quot;1947-08-15&quot;), RelationWithNominee = &quot;Father&quot;, NomineeHouseNo = &quot;3-25&quot;, NomineeStreet = &quot;Vidyanagar 7th line&quot;, NomineeCity = &quot;Singarayakonda&quot;, NomineeState = &quot;Andhra Pradesh&quot;, NomineePincode = 897656},
+                new() {CustomerId = 10000002, FatherName = &quot;K V S Koteswara Rao&quot;, MotherName = &quot;Anjali&quot;, NomineeName = &quot;K V S Koteswara Rao&quot;, NomineeDateOfBirth = DateOnly.Parse(&quot;1956-09-08&quot;), RelationWithNominee = &quot;Father&quot;, NomineeHouseNo = &quot;#25&quot;, NomineeStreet = &quot;Arundalpet&quot;, NomineeCity = &quot;Narasaraopet&quot;, NomineeState = &quot;Andhra Pradesh&quot;, NomineePincode = 678998},
+                new() {CustomerId = 10000003, FatherName = &quot;Jaganadham&quot;, MotherName = &quot;Annapurnamma&quot;, SpouseName = &quot;K V S Koteswara Rao&quot;, NomineeName = &quot;K V S Koteswara Rao&quot;, NomineeDateOfBirth = DateOnly.Parse(&quot;1979-07-19&quot;), RelationWithNominee = &quot;Spouse&quot;,NomineeHouseNo = &quot;3-25&quot;, NomineeStreet = &quot;Vidyanagar 7th line&quot;, NomineeCity = &quot;Singarayakonda&quot;, NomineeState = &quot;Andhra Pradesh&quot;, NomineePincode = 897656}
+            }.AsQueryable();
+            return customerFamilyAndNomineeDetails;
+        }
+        public static IQueryable&lt;KYCEntity&gt; GetKYCs()
+        {
+            IQueryable&lt;KYCEntity&gt; customerKYCs = new List&lt;KYCEntity&gt;
+            {
+                new() {CustomerId = 10000001, KYCStatus = &quot;Uploaded&quot; },
+                new() {CustomerId = 10000002, KYCStatus = &quot;Approved&quot;},
+                new() {CustomerId = 10000003, KYCStatus = &quot;Rejected&quot;}
+            }.AsQueryable();
+            return customerKYCs;
+        }
+        public static IQueryable&lt;AccountsEntity&gt; GetAccounts()
+        {
+            IQueryable&lt;AccountsEntity&gt; customerAccounts = new List&lt;AccountsEntity&gt;
+            {
+                new() {AccountNumber = 100000000001, CustomerId = 10000001, BranchID = 1, AccountBalance = 0.02, AccountTypeId = 1, FreezeWithdrawl = false, MaxBalanceWarningAmount = 0, MinBalanceWarningAmount = 0},
+                new() {AccountNumber = 100000000002, CustomerId = 10000002, BranchID = 2, AccountBalance = 1000, AccountTypeId = 2, FreezeWithdrawl = true, MaxBalanceWarningAmount = 0, MinBalanceWarningAmount = 0},
+                new() {AccountNumber = 100000000003, CustomerId = 10000003, BranchID = 3, AccountBalance = 0, AccountTypeId = 3, FreezeWithdrawl = false, MaxBalanceWarningAmount = 0, MinBalanceWarningAmount =0 }
+            }.AsQueryable();
+            return customerAccounts;
+        }
+        public static IQueryable&lt;AccountTypeEntity&gt; GetAccountTypes()
+        {
+            IQueryable&lt;AccountTypeEntity&gt; accountTypes = new List&lt;AccountTypeEntity&gt;
+            {
+                new() {AccountTypeId = 1, AccountType = &quot;Easy Access Savings Account&quot; },
+                new() {AccountTypeId = 2, AccountType = &quot;Amaze Savings Account&quot;},
+                new() {AccountTypeId = 3, AccountType = &quot;Liberty Savings Account&quot;}
+            }.AsQueryable();
+            return accountTypes;
+        }
+        public static IQueryable&lt;BranchEntity&gt; GetAllBranches()
+        {
+            IQueryable&lt;BranchEntity&gt; branches = new List&lt;BranchEntity&gt;
+            {
+                new() {BranchID = 1, BranchLocatedState = &quot;Andhra Pradesh&quot;, City =&quot;Visakhapatnam&quot;, BranchAddress = &quot;123 Beach Road, Near RK Beach&quot;, IFSCCode = &quot;ENV0001234&quot;},
+                new() {BranchID = 2, BranchLocatedState = &quot;Andhra Pradesh&quot;, City = &quot;Visakhapatnam&quot;, BranchAddress = &quot;456 Beach Road, Near RK Beach&quot;, IFSCCode = &quot;ENV0005678&quot;},
+                new() {BranchID = 3, BranchLocatedState = &quot;Andhra Pradesh&quot;, City = &quot;Vijayawada&quot;, BranchAddress = &quot;789 MG Road, Near Benz Circle&quot;, IFSCCode = &quot;ENV0003456&quot;}
+            }.AsQueryable();
+            return branches;
+        }
+        public static IQueryable&lt;TransactionsEntity&gt; GetAllTransactions()
+        {
+            IQueryable&lt;TransactionsEntity&gt; transactions = new List&lt;TransactionsEntity&gt;
+            {
+                new() {TransactionID = 1000000, SenderAccountNumber = 100000000001, ReceiverAccountNumber =100000000001, Amount = 1000, TransactionTime = DateTime.Parse(&quot;2025-02-27 08:22:14.5384101&quot;), Remarks = &quot;Amount Deposit by self&quot;},
+                new() {TransactionID = 1000001, SenderAccountNumber = 100000000001, ReceiverAccountNumber =100000000002, Amount = 1000, TransactionTime = DateTime.Parse(&quot;2025-02-27 08:23:31.7628728&quot;), Remarks =&quot;Transferring to my self account&quot;},
+                new() {TransactionID = 1000002, SenderAccountNumber = 100000000001, ReceiverAccountNumber = 100000000001, Amount = 0.02, TransactionTime = DateTime.Parse(&quot;2025-02-27 09:07:50.8597844&quot;), Remarks = &quot;Amount Deposit by self&quot;}
+            }.AsQueryable();
+            return transactions;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,1],[16,13,21,29,1],[22,13,22,37,1],[23,9,23,10,1],[25,9,25,10,1],[26,13,31,29,1],[32,13,32,33,1],[33,9,33,10,1],[35,9,35,10,1],[36,13,41,29,1],[42,13,42,38,1],[43,9,43,10,1],[45,9,45,10,1],[46,13,51,29,1],[52,13,52,52,1],[53,9,53,10,1],[55,9,55,10,1],[56,13,61,29,1],[62,13,62,33,1],[63,9,63,10,1],[65,9,65,10,1],[66,13,71,29,1],[72,13,72,37,1],[73,9,73,10,1],[75,9,75,10,1],[76,13,81,29,1],[82,13,82,33,1],[83,9,83,10,1],[85,9,85,10,1],[86,13,91,29,1],[92,13,92,29,1],[93,9,93,10,1],[95,9,95,10,1],[96,13,101,29,1],[102,13,102,33,1],[103,9,103,10,1]]);
+    </script>
+  </body>
+</html>

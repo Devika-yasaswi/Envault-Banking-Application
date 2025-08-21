@@ -1,0 +1,6 @@
+@Envault_Backend_HostAddress = http://localhost:5163
+
+GET {{Envault_Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

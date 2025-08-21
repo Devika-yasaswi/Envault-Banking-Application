@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\DataAccessLayer\Infrastructure\AdminRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Infrastructure
+{
+    public class AdminRepository : IAdminRepository
+    {
+        private readonly ApplicationDBContext _dbContext;
+        public AdminRepository(ApplicationDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public List&lt;KYCEntity&gt; GetAllPendingRequests()
+        {
+            try
+            {
+                return _dbContext.Set&lt;KYCEntity&gt;().Where(status =&gt; status.KYCStatus == &quot;uploaded&quot;).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public List&lt;KYCEntity&gt; GetAllApprovedRequests()
+        {
+            try
+            {
+                return _dbContext.Set&lt;KYCEntity&gt;().Where(status =&gt; status.KYCStatus == &quot;approved&quot;).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public List&lt;KYCEntity&gt; GetAllRejectedRequests()
+        {
+            try
+            {
+                return _dbContext.Set&lt;KYCEntity&gt;().Where(status =&gt; status.KYCStatus == &quot;rejected&quot;).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public BasicDetailsEntity GetCustomerDetails(long customerId)
+        {
+            try
+            {
+                BasicDetailsEntity customerDetails =  _dbContext.Set&lt;BasicDetailsEntity&gt;().Include(customer =&gt; customer.CustomerAddress).Include(customer =&gt; customer.CustomerFamilyAndNomineeDetails).Include(customer =&gt; customer.KYC).Where(customer =&gt; customer.CustomerId == customerId).First();
+                return customerDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void ApproveRequest(long customerId)
+        {
+            try
+            {
+                KYCEntity customerDetails = _dbContext.Set&lt;KYCEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                customerDetails.KYCStatus = &quot;approved&quot;;
+                customerDetails.ModifiedBy = &quot;admin@gmail.com&quot;;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void RejectRequest(long customerId)
+        {
+            try
+            {
+                KYCEntity customerDetails = _dbContext.Set&lt;KYCEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                customerDetails.KYCStatus = &quot;rejected&quot;;
+                customerDetails.ModifiedBy = &quot;admin@gmail.com&quot;;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,63,1],[16,9,16,10,1],[17,13,17,36,1],[18,9,18,10,1],[20,9,20,10,0],[22,13,22,14,0],[23,17,23,109,0],[25,13,25,33,0],[26,13,26,14,0],[27,17,27,49,0],[29,9,29,10,0],[31,9,31,10,0],[33,13,33,14,0],[34,17,34,109,0],[36,13,36,33,0],[37,13,37,14,0],[38,17,38,49,0],[40,9,40,10,0],[42,9,42,10,0],[44,13,44,14,0],[45,17,45,109,0],[47,13,47,33,0],[48,13,48,14,0],[49,17,49,49,0],[51,9,51,10,0],[53,9,53,10,0],[55,13,55,14,0],[56,17,56,295,0],[57,17,57,40,0],[59,13,59,33,0],[60,13,60,14,0],[61,17,61,49,0],[63,9,63,10,0],[65,9,65,10,0],[67,13,67,14,0],[68,17,68,134,0],[69,17,69,56,0],[70,17,70,64,0],[71,17,71,42,0],[72,13,72,14,0],[73,13,73,33,0],[74,13,74,14,0],[75,17,75,49,0],[77,9,77,10,0],[79,9,79,10,0],[81,13,81,14,0],[82,17,82,134,0],[83,17,83,56,0],[84,17,84,64,0],[85,17,85,42,0],[86,13,86,14,0],[87,13,87,33,0],[88,13,88,14,0],[89,17,89,49,0],[91,9,91,10,0]]);
+    </script>
+  </body>
+</html>

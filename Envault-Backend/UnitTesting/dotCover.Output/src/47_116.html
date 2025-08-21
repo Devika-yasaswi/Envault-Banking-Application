@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\ENVAULT\Envault-Backend\DataAccessLayer\Infrastructure\CustomerRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using ApplicationLayer.Interfaces;
+using CoreModels.Entities;
+using CoreModels.Models;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Infrastructure
+{
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly ApplicationDBContext _dbContext;
+        public CustomerRepository(ApplicationDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        //Returns basic details of the customer - For viewing Profile
+        public BasicDetailsEntity GetBasicDetails(long customerId)
+        {
+            try
+            {
+                BasicDetailsEntity customerDetails = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                return customerDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Returns stored addresses of the customer - For viewing Profile
+        public CustomerAddressEntity GetCustomerAddress(long customerId)
+        {
+            try
+            {
+                CustomerAddressEntity customerDetails = _dbContext.Set&lt;CustomerAddressEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                return customerDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Returns family and nominee details of the customer - For viewing Profile
+        public CustomerFamilyAndNomineeDetailsEntity GetCustomerFamilyAndNomineeDetails(long customerId)
+        {
+            try
+            {
+                CustomerFamilyAndNomineeDetailsEntity customerDetails = _dbContext.Set&lt;CustomerFamilyAndNomineeDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).First();
+                return customerDetails;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Updates the existing basic details of customer - Edit Profile invokes this
+        public void EditBasicDetails(BasicDetailsEntity basicDetails)
+        {
+            try
+            {
+                BasicDetailsEntity customerDetails = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == basicDetails.CustomerId).First();
+                customerDetails.EmployementType = basicDetails.EmployementType;
+                customerDetails.AnnualIncome = basicDetails.AnnualIncome;
+                customerDetails.ModifiedBy = basicDetails.CustomerEmail;
+                customerDetails.ModifiedOn = DateTime.UtcNow;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Updates the existing addresses of customer - Edit Profile invokes this
+        public void EditCustomerAddress(CustomerAddressEntity customerAddress)
+        {
+            try
+            {
+                CustomerAddressEntity customerDetails = _dbContext.Set&lt;CustomerAddressEntity&gt;().Where(customer =&gt; customer.CustomerId == customerAddress.CustomerId).First();
+                customerDetails.PermanentHouseNo = customerAddress.PermanentHouseNo;
+                customerDetails.PermanentStreet = customerAddress.PermanentStreet;
+                customerDetails.PermanentCity = customerAddress.PermanentCity;
+                customerDetails.PermanentState = customerAddress.PermanentState;
+                customerDetails.PermanentPincode = customerAddress.PermanentPincode;
+                customerDetails.PresentHouseNo = customerAddress.PresentHouseNo;
+                customerDetails.PresentStreet = customerAddress.PresentStreet;
+                customerDetails.PresentCity = customerAddress.PresentCity;
+                customerDetails.PresentState = customerAddress.PresentState;
+                customerDetails.PresentPincode = customerAddress.PresentPincode;
+                customerDetails.ModifiedBy = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerAddress.CustomerId).Select(customer =&gt; customer.CustomerEmail).FirstOrDefault();
+                customerDetails.ModifiedOn = DateTime.UtcNow;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Updates the existing Nominee details of customer - Edit Profile invokes this
+        public void EditCustomerFamilyAndNomineeDetails(CustomerFamilyAndNomineeDetailsEntity customerFamilyAndNomineeDetails)
+        {
+            try
+            {
+                CustomerFamilyAndNomineeDetailsEntity customerDetails = _dbContext.Set&lt;CustomerFamilyAndNomineeDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerFamilyAndNomineeDetails.CustomerId).First();
+                customerDetails.SpouseName = customerFamilyAndNomineeDetails.SpouseName;
+                customerDetails.NomineeName = customerFamilyAndNomineeDetails.NomineeName;
+                customerDetails.NomineeHouseNo = customerFamilyAndNomineeDetails.NomineeHouseNo;
+                customerDetails.NomineeStreet = customerFamilyAndNomineeDetails.NomineeStreet;
+                customerDetails.NomineeCity = customerFamilyAndNomineeDetails.NomineeCity;
+                customerDetails.NomineeState = customerFamilyAndNomineeDetails.NomineeState;
+                customerDetails.NomineePincode = customerFamilyAndNomineeDetails.NomineePincode;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public List&lt;AccountDetails&gt; GetAllAccounts(long customerId)
+        {
+
+            try
+            {
+                List&lt;AccountDetails&gt; accounts = _dbContext.Set&lt;AccountsEntity&gt;()
+                        .Where(customer =&gt; customer.CustomerId == customerId)
+                        .Join(_dbContext.Set&lt;AccountTypeEntity&gt;(),
+                              account =&gt; account.AccountTypeId,
+                              accountTypes =&gt; accountTypes.AccountTypeId,
+                        (account, accountTypes) =&gt; new AccountDetails
+                        {
+                            AccountNumber = account.AccountNumber,
+                            AccountType = accountTypes.AccountType,
+                            AccountBalance = account.AccountBalance,
+                            FreezeWithdrawl = account.FreezeWithdrawl,
+                            MaxBalanceWarningAmount = account.MaxBalanceWarningAmount,
+                            MinBalanceWarningAmount = account.MinBalanceWarningAmount
+                        }).ToList();
+                return accounts;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public string KYCStatus(long customerId)
+        {
+            try
+            {
+                string kycStatus = _dbContext.Set&lt;KYCEntity&gt;().Where(customer =&gt; customer.CustomerId == customerId).Select(customer =&gt; customer.KYCStatus).FirstOrDefault();
+                if (kycStatus != null)
+                    return kycStatus;
+                return kycStatus;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //KYC details will be addded into the data
+        public void CompleteKYC(KYCModel customerKYCDetails)
+        {
+            try
+            {
+                KYCEntity? customerKYC = _dbContext.Set&lt;KYCEntity&gt;().Where(kyc =&gt; kyc.CustomerId == customerKYCDetails.CustomerId).FirstOrDefault();
+                if (customerKYC == null)
+                {
+                    KYCEntity newCustomerKyc = new()
+                    {
+                        CustomerId = customerKYCDetails.CustomerId,
+                        KYCStatus = &quot;uploaded&quot;,
+                        AadharCard = Convert.FromBase64String(customerKYCDetails.AadharCard.Split(&#39;,&#39;)[1]),
+                        PANCard = Convert.FromBase64String(customerKYCDetails.PANCard.Split(&quot;,&quot;)[1]),
+                        CustomerPhoto = Convert.FromBase64String(customerKYCDetails.CustomerPhoto.Split(&quot;,&quot;)[1]),
+                        CreatedBy = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerKYCDetails.CustomerId).Select(customer =&gt; customer.CustomerEmail).FirstOrDefault()
+                    };
+                    newCustomerKyc.ModifiedBy = newCustomerKyc.CreatedBy;
+                    _dbContext.Set&lt;KYCEntity&gt;().Add(newCustomerKyc);
+                }
+                else
+                {
+                    customerKYC.AadharCard = Convert.FromBase64String(customerKYCDetails.AadharCard.Split(&#39;,&#39;)[1]);
+                    customerKYC.PANCard = Convert.FromBase64String(customerKYCDetails.PANCard.Split(&quot;,&quot;)[1]);
+                    customerKYC.CustomerPhoto = Convert.FromBase64String(customerKYCDetails.CustomerPhoto.Split(&quot;,&quot;)[1]);
+                    customerKYC.KYCStatus = &quot;uploaded&quot;;
+                    customerKYC.ModifiedBy = _dbContext.Set&lt;BasicDetailsEntity&gt;().Where(customer =&gt; customer.CustomerId == customerKYCDetails.CustomerId).Select(customer =&gt; customer.CustomerEmail).FirstOrDefault();
+                    customerKYC.ModifiedOn = DateTime.UtcNow;
+                }
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Deposits money into customer account
+        public void DepositMoney(TransactionsEntity transactionDetails)
+        {
+            try
+            {
+                transactionDetails.SenderAccountNumber = transactionDetails.ReceiverAccountNumber;
+                transactionDetails.TransactionTime = DateTime.UtcNow;
+                transactionDetails.Remarks = &quot;Amount Deposit by self&quot;;
+                transactionDetails.CreatedBy = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == transactionDetails.SenderAccountNumber)
+                                                .Join(_dbContext.Set&lt;BasicDetailsEntity&gt;(),
+                                                      account =&gt; account.CustomerId,
+                                                      basicDetails =&gt; basicDetails.CustomerId,
+                                                      (account, basicDetails) =&gt; new { basicDetails.CustomerEmail })
+                                                .Select(result =&gt; result.CustomerEmail).FirstOrDefault();
+                transactionDetails.ModifiedBy = transactionDetails.CreatedBy;
+                AccountsEntity accountDetails = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == transactionDetails.SenderAccountNumber).First();
+                accountDetails.AccountBalance = accountDetails.AccountBalance + transactionDetails.Amount;
+                _dbContext.Set&lt;TransactionsEntity&gt;().Add(transactionDetails);
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether the account number exists or not
+        public bool IsValidAccountNumber(long accountNumber)
+        {
+            try
+            {
+                AccountsEntity? account = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).FirstOrDefault();
+                if (account != null)
+                    return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether user has sufficient balance to perform transaction or not
+        public bool HasSufficientBalance(long accountNumber, double amount)
+        {
+            try
+            {
+                AccountsEntity accountDetails = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                if (accountDetails.AccountBalance &lt; amount)
+                    return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether the balance is exceeding the min threshold value or not
+        public bool IsExceedingMinBalanceWarningAmount(long accountNumber, double amount)
+        {
+            try
+            {
+                AccountsEntity accountDetails = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                if (accountDetails.AccountBalance - amount &lt; accountDetails.MinBalanceWarningAmount &amp;&amp; accountDetails.MinBalanceWarningAmount != 0)
+                    return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Checks whether the balance is exceeding the max threshold value or not
+        public bool IsExceedingMaxBalanceWarningAmount(long accountNumber, double amount)
+        {
+            try
+            {
+                AccountsEntity accountDetails = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                if (accountDetails.AccountBalance + amount &gt; accountDetails.MaxBalanceWarningAmount &amp;&amp; accountDetails.MaxBalanceWarningAmount != 0)
+                    return true;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Internal fund transfer will be done
+        public void TransferMoney(TransactionsEntity transactionDetails)
+        {
+            try
+            {
+                var accounts = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == transactionDetails.SenderAccountNumber || account.AccountNumber == transactionDetails.ReceiverAccountNumber).ToList();
+                AccountsEntity senderAccount = accounts.Where(account =&gt; account.AccountNumber == transactionDetails.SenderAccountNumber).First();
+                senderAccount.AccountBalance = senderAccount.AccountBalance - transactionDetails.Amount;
+                AccountsEntity receiverAccount = accounts.Where(account =&gt; account.AccountNumber == transactionDetails.ReceiverAccountNumber).First();
+                receiverAccount.AccountBalance = receiverAccount.AccountBalance + transactionDetails.Amount;
+                transactionDetails.TransactionTime = DateTime.UtcNow;
+                transactionDetails.CreatedBy = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == transactionDetails.SenderAccountNumber)
+                                                .Join(_dbContext.Set&lt;BasicDetailsEntity&gt;(),
+                                                      account =&gt; account.CustomerId,
+                                                      basicDetails =&gt; basicDetails.CustomerId,
+                                                      (account, basicDetails) =&gt; new { basicDetails.CustomerEmail })
+                                                .Select(result =&gt; result.CustomerEmail).FirstOrDefault();
+                transactionDetails.ModifiedBy = transactionDetails.CreatedBy;
+                _dbContext.Set&lt;TransactionsEntity&gt;().Add(transactionDetails);
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Edits balance threshold value - customer will get an alert if the balance decreases more than that
+        public void EditThresholdValue(long accountNumber, double minBalanceWarningAmount, double maxBalanceWarningAmount)
+        {
+            try
+            {
+                AccountsEntity accountDetails = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                accountDetails.MinBalanceWarningAmount = minBalanceWarningAmount;
+                accountDetails.MaxBalanceWarningAmount = maxBalanceWarningAmount;
+                accountDetails.ModifiedOn = DateTime.UtcNow;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Freezes withdrawls of the customer
+        public void FreezeWithdrawls(long accountNumber)
+        {
+            try
+            {
+                AccountsEntity account = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                account.FreezeWithdrawl = true;
+                account.ModifiedOn = DateTime.UtcNow;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Unfreezes the account and allows customer to transfer/ withdraw their amount
+        public void UnFreezeWithdrawls(long accountNumber)
+        {
+            try
+            {
+                AccountsEntity account = _dbContext.Set&lt;AccountsEntity&gt;().Where(account =&gt; account.AccountNumber == accountNumber).First();
+                account.FreezeWithdrawl = false;
+                account.ModifiedOn = DateTime.UtcNow;
+                _dbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        //Gives all the transactions of the customer based on their account number
+        public List&lt;TransactionsEntity&gt; GetAllTransactions(long accountNumber)
+        {
+            try
+            {
+                return _dbContext.Set&lt;TransactionsEntity&gt;().Where(transaction =&gt; transaction.SenderAccountNumber == accountNumber || transaction.ReceiverAccountNumber == accountNumber).OrderByDescending(transaction =&gt; transaction.TransactionTime).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,66,1],[17,9,17,10,1],[18,13,18,36,1],[19,9,19,10,1],[22,9,22,10,1],[24,13,24,14,1],[25,17,25,152,1],[26,17,26,40,1],[28,13,28,33,1],[29,13,29,14,1],[30,17,30,49,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,14,1],[38,17,38,158,1],[39,17,39,40,1],[41,13,41,33,1],[42,13,42,14,1],[43,17,43,49,1],[45,9,45,10,1],[48,9,48,10,1],[50,13,50,14,1],[51,17,51,190,1],[52,17,52,40,1],[54,13,54,33,1],[55,13,55,14,1],[56,17,56,49,1],[58,9,58,10,1],[61,9,61,10,1],[63,13,63,14,1],[64,17,64,165,1],[65,17,65,80,1],[66,17,66,74,1],[67,17,67,73,1],[68,17,68,62,1],[69,17,69,42,1],[70,13,70,14,1],[71,13,71,33,1],[72,13,72,14,1],[73,17,73,49,1],[75,9,75,10,1],[78,9,78,10,1],[80,13,80,14,1],[81,17,81,174,1],[82,17,82,85,1],[83,17,83,83,1],[84,17,84,79,1],[85,17,85,81,1],[86,17,86,85,1],[87,17,87,81,1],[88,17,88,79,1],[89,17,89,75,1],[90,17,90,77,1],[91,17,91,81,1],[92,17,92,212,1],[93,17,93,62,1],[94,17,94,42,1],[95,13,95,14,1],[96,13,96,33,1],[97,13,97,14,1],[98,17,98,49,1],[100,9,100,10,1],[103,9,103,10,1],[105,13,105,14,1],[106,17,106,222,1],[107,17,107,89,1],[108,17,108,91,1],[109,17,109,97,1],[110,17,110,95,1],[111,17,111,91,1],[112,17,112,93,1],[113,17,113,97,1],[114,17,114,42,1],[115,13,115,14,1],[116,13,116,33,1],[117,13,117,14,1],[118,17,118,49,1],[120,9,120,10,1],[122,9,122,10,1],[125,13,125,14,1],[126,17,139,37,1],[140,17,140,33,1],[142,13,142,33,1],[143,13,143,14,1],[144,17,144,49,1],[146,9,146,10,1],[148,9,148,10,1],[150,13,150,14,1],[151,17,151,173,1],[152,17,152,39,1],[153,21,153,38,1],[154,17,154,34,1],[156,13,156,33,1],[157,13,157,14,1],[158,17,158,49,1],[160,9,160,10,1],[163,9,163,10,1],[165,13,165,14,1],[166,17,166,149,1],[167,17,167,41,1],[168,17,168,18,1],[169,21,177,23,1],[178,21,178,74,0],[179,21,179,69,0],[180,17,180,18,0],[182,17,182,18,1],[183,21,183,116,1],[184,21,184,110,0],[185,21,185,122,0],[186,21,186,56,0],[187,21,187,215,0],[188,21,188,62,0],[189,17,189,18,0],[190,17,190,42,0],[191,13,191,14,0],[192,13,192,33,1],[193,13,193,14,1],[194,17,194,49,1],[196,9,196,10,0],[199,9,199,10,1],[201,13,201,14,1],[202,17,202,99,1],[203,17,203,70,1],[204,17,204,71,1],[205,17,210,106,1],[211,17,211,78,1],[212,17,212,172,1],[213,17,213,107,1],[214,17,214,78,1],[215,17,215,42,1],[216,13,216,14,1],[217,13,217,33,1],[218,13,218,14,1],[219,17,219,49,1],[221,9,221,10,1],[224,9,224,10,1],[226,13,226,14,1],[227,17,227,150,1],[228,17,228,37,1],[229,21,229,33,1],[230,17,230,30,1],[232,13,232,33,1],[233,13,233,14,1],[234,17,234,49,1],[236,9,236,10,1],[239,9,239,10,1],[241,13,241,14,1],[242,17,242,147,1],[243,17,243,60,1],[244,21,244,34,1],[245,17,245,29,1],[247,13,247,33,1],[248,13,248,14,1],[249,17,249,49,1],[251,9,251,10,1],[254,9,254,10,1],[256,13,256,14,1],[257,17,257,147,1],[258,17,258,148,1],[259,21,259,33,1],[260,17,260,30,1],[262,13,262,33,1],[263,13,263,14,1],[264,17,264,49,1],[266,9,266,10,1],[269,9,269,10,1],[271,13,271,14,1],[272,17,272,147,1],[273,17,273,148,1],[274,21,274,33,1],[275,17,275,30,1],[277,13,277,33,1],[278,13,278,14,1],[279,17,279,49,1],[281,9,281,10,1],[284,9,284,10,1],[286,13,286,14,1],[287,17,287,225,1],[288,17,288,74,1],[288,74,288,137,1],[288,137,288,147,1],[289,17,289,105,1],[290,17,290,76,1],[290,76,290,141,1],[290,141,290,151,1],[291,17,291,109,1],[292,17,292,70,1],[293,17,298,106,1],[299,17,299,78,1],[300,17,300,78,1],[301,17,301,42,1],[302,13,302,14,1],[303,13,303,33,1],[304,13,304,14,1],[305,17,305,49,1],[307,9,307,10,1],[310,9,310,10,1],[312,13,312,14,1],[313,17,313,147,1],[314,17,314,82,1],[315,17,315,82,1],[316,17,316,61,1],[317,17,317,42,1],[318,13,318,14,1],[319,13,319,33,1],[320,13,320,14,1],[321,17,321,49,1],[323,9,323,10,1],[326,9,326,10,1],[328,13,328,14,1],[329,17,329,140,1],[330,17,330,48,1],[331,17,331,54,1],[332,17,332,42,1],[333,13,333,14,1],[334,13,334,33,1],[335,13,335,14,1],[336,17,336,49,1],[338,9,338,10,1],[341,9,341,10,1],[343,13,343,14,1],[344,17,344,140,1],[345,17,345,49,1],[346,17,346,54,1],[347,17,347,42,1],[348,13,348,14,1],[349,13,349,33,1],[350,13,350,14,1],[351,17,351,49,1],[353,9,353,10,1],[356,9,356,10,1],[358,13,358,14,1],[359,17,359,257,1],[361,13,361,33,1],[362,13,362,14,1],[363,17,363,49,1],[365,9,365,10,1]]);
+    </script>
+  </body>
+</html>
